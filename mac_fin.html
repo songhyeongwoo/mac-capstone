@@ -29,6 +29,7 @@ tailwind.config = {
 body { background: #fff; color: #0F172A; }
 .hide { display: none !important; }
 .page { transition: opacity .25s; }
+#page-data-check, #page-data-editor { height:100vh; max-height:100vh; }
 
 /* scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -121,20 +122,20 @@ body { background: #fff; color: #0F172A; }
 .create-flow-step.active .num { background:#4F46E5; border-color:#4F46E5; color:#fff; box-shadow:0 6px 14px rgba(79,70,229,.18); }
 .create-flow-line { width:34px; height:1px; background:#E2E8F0; }
 .create-flow-line.done { background:#A7F3D0; }
-.dw-table-scroll { flex:1; min-height:0; min-width:0; overflow:auto; padding:20px; max-width:100%; }
-.dw-table-frame { background:#fff; border:1px solid #E2E8F0; border-radius:12px; box-shadow:0 1px 3px rgba(15,23,42,.04); min-height:100%; min-width:max-content; overflow:visible; }
-.dw-table { border-collapse:separate; border-spacing:0; font-size:13px; width:max-content; min-width:100%; }
+.dw-table-scroll { flex:1; min-height:0; min-width:0; overflow:auto; padding:12px; max-width:100%; box-sizing:border-box; background:#F8FAFC; }
+.dw-table-frame { display:inline-block; background:#fff; border:1px solid #E2E8F0; border-radius:10px; box-shadow:0 1px 3px rgba(15,23,42,.04); min-height:100%; min-width:100%; overflow:visible; margin:0 10px 10px 0; }
+.dw-table { border-collapse:separate; border-spacing:0; font-size:12.5px; width:max-content; min-width:100%; }
 .dw-table th { position:sticky; top:0; z-index:4; background:#F8FAFC; border-bottom:1px solid #CBD5E1; border-right:1px solid #E2E8F0; color:#475569; font-size:12px; font-weight:800; padding:0; }
-.dw-table td { border-right:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0; background:#fff; padding:0; min-width:150px; }
-.dw-row-index { position:sticky; left:0; z-index:5; min-width:58px !important; width:58px; background:#F8FAFC !important; color:#94A3B8; text-align:center; font-weight:800; border-right:1px solid #CBD5E1 !important; }
+.dw-table td { border-right:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0; background:#fff; padding:0; min-width:124px; }
+.dw-row-index { position:sticky; left:0; z-index:5; min-width:52px !important; width:52px; background:#F8FAFC !important; color:#94A3B8; text-align:center; font-weight:800; border-right:1px solid #CBD5E1 !important; }
 .dw-table tbody .dw-row-index { z-index:3; font-size:11px; }
-.dw-row-index-inner { position:relative; display:flex; align-items:center; justify-content:center; min-height:35px; padding:0 16px 0 8px; }
+.dw-row-index-inner { position:relative; display:flex; align-items:center; justify-content:center; min-height:32px; padding:0 15px 0 7px; }
 .dw-row-delete { position:absolute; right:4px; top:50%; transform:translateY(-50%); width:16px; height:16px; border-radius:5px; display:flex; align-items:center; justify-content:center; color:#CBD5E1; opacity:.35; transition:all .16s; font-size:13px; line-height:1; }
 .dw-row-index:hover .dw-row-delete { opacity:1; color:#94A3B8; background:#F1F5F9; }
 .dw-row-delete:hover { color:#DC2626 !important; background:#FEF2F2 !important; }
 .dw-head-input,.dw-cell-input { width:100%; min-width:0; background:transparent; outline:none; border:0; }
-.dw-head-input { padding:10px 12px; color:#0F172A; font-weight:800; }
-.dw-cell-input { padding:9px 12px; color:#0F172A; font-weight:600; }
+.dw-head-input { padding:7px 9px; color:#0F172A; font-weight:800; }
+.dw-cell-input { padding:7px 9px; color:#0F172A; font-weight:600; min-height:32px; }
 .dw-col-badge { display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; border-radius:6px; background:#EEF2FF; color:#4F46E5; font-size:10px; font-weight:900; }
 .dw-table th.dw-col-x, .dw-table td.dw-col-x { background:#EFF6FF !important; }
 .dw-table th.dw-col-y, .dw-table td.dw-col-y { background:#F5F3FF !important; }
@@ -159,6 +160,12 @@ body { background: #fff; color: #0F172A; }
 .dw-legend-date { color:#059669; background:#ECFDF5; border-color:#A7F3D0; }
 .dw-legend-text { color:#0F172A; background:#F8FAFC; border-color:#CBD5E1; }
 .dw-legend-empty { color:#DC2626; background:#FEF2F2; border-color:#FCA5A5; }
+.raw-editor-body { flex:1; min-height:0; min-width:0; overflow:hidden; padding:16px 24px; background:#F8FAFC; display:flex; flex-direction:column; }
+.project-title-input { width:100%; border:0; outline:0; background:transparent; color:#0F172A; font-size:15px; font-weight:900; padding:0; }
+.project-title-input:focus { color:#4F46E5; }
+.project-card-thumb { aspect-ratio:16/10; background:#F8FAFC; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.project-card-thumb img { width:100%; height:100%; object-fit:cover; }
+.export-option-disabled { opacity:.58; cursor:not-allowed; }
 
 /* tab underline */
 .tab-btn { padding:8px 14px; font-size:13.5px; font-weight:600; color:#94A3B8; border-bottom:2px solid transparent; cursor:pointer; transition:all .2s; }
@@ -509,7 +516,7 @@ body { background: #fff; color: #0F172A; }
         <div class="flex items-center gap-3">
           <div class="relative">
             <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input type="text" placeholder="프로젝트 검색..." class="pl-10 pr-4 py-2.5 border border-border rounded-xl text-sm font-medium w-64 bg-surface focus:bg-white focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all">
+            <input id="project-search" type="text" placeholder="프로젝트 검색..." oninput="renderProjectsList()" class="pl-10 pr-4 py-2.5 border border-border rounded-xl text-sm font-medium w-64 bg-surface focus:bg-white focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all">
           </div>
           <button onclick="go('new-viz')" class="bg-accent hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
@@ -521,7 +528,7 @@ body { background: #fff; color: #0F172A; }
         <button class="bg-slate-100 text-dark px-4 py-1.5 rounded-lg text-xs">전체</button>
         <button class="text-muted hover:bg-surface hover:text-dark px-4 py-1.5 rounded-lg text-xs transition-colors">최근 수정</button>
       </div>
-      <div class="flex-1 flex flex-col items-center justify-center p-8">
+      <div id="project-empty-state" class="flex-1 flex flex-col items-center justify-center p-8">
         <div class="bg-white p-10 rounded-2xl border border-border shadow-sm text-center max-w-sm w-full">
           <div class="w-20 h-20 bg-surface rounded-2xl flex items-end justify-center gap-1.5 pb-3 mx-auto mb-5">
             <div class="w-3 bg-blue-200 rounded-t-sm" style="height:40%"></div>
@@ -532,6 +539,9 @@ body { background: #fff; color: #0F172A; }
           <p class="text-muted text-sm mb-7 font-medium">새로운 시각화를 만들어 데이터를 한눈에 파악하세요.</p>
           <button onclick="go('new-viz')" class="w-full bg-accent hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-md">첫 번째 시각화 만들기</button>
         </div>
+      </div>
+      <div id="project-list-wrap" class="hide flex-1 overflow-y-auto p-8">
+        <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5"></div>
       </div>
     </div>
 
@@ -753,7 +763,11 @@ body { background: #fff; color: #0F172A; }
       </div>
       <h1 class="text-2xl font-black text-dark leading-tight mb-4">데이터를 먼저 확인해요</h1>
       <p class="text-[15px] text-slate-600 leading-relaxed font-medium mb-5">
-        차트를 만들기 전에 표가 올바르게 읽혔는지 확인하세요. 색으로 표시된 셀을 보면 숫자, 날짜, 문자, 빈칸을 빠르게 점검할 수 있습니다.
+        차트를 만들기 전에 표가 올바르게 읽혔는지 확인하세요. 색으로 표시된 셀을 보면
+        <span class="dw-legend-chip dw-legend-number align-middle mx-0.5">숫자</span>
+        <span class="dw-legend-chip dw-legend-date align-middle mx-0.5">날짜</span>
+        <span class="dw-legend-chip dw-legend-text align-middle mx-0.5">문자</span>
+        <span class="dw-legend-chip dw-legend-empty align-middle mx-0.5">빈칸</span>을 빠르게 점검할 수 있습니다.
       </p>
       <div class="border border-border rounded-2xl p-4 bg-surface/70 mb-6">
         <div class="text-[11px] font-black text-muted tracking-widest mb-3">셀 색상 안내</div>
@@ -931,7 +945,7 @@ body { background: #fff; color: #0F172A; }
     </div>
     <button onclick="go('data-editor')" class="bg-accent text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-indigo-700 transition-colors">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-      내 프로젝트 저장하기
+      예시 편집으로 이동
     </button>
   </div>
   <div class="flex-1 flex items-center justify-center px-8 py-16">
@@ -1005,7 +1019,7 @@ body { background: #fff; color: #0F172A; }
     </div>
     <button onclick="startBlankDataCheck()" class="bg-accent text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-indigo-700 transition-colors">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-      내 프로젝트 저장하기
+      빈 데이터 시작
     </button>
   </div>
   <div class="flex-1 px-8 py-12 max-w-3xl mx-auto w-full">
@@ -1216,9 +1230,9 @@ body { background: #fff; color: #0F172A; }
       <span class="text-sm font-extrabold text-dark">새 시각화 만들기</span>
     </div>
     <div id="progress-data-editor" class="create-flow-progress"></div>
-    <button class="bg-accent text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-indigo-700 transition-colors">
+    <button onclick="saveCurrentProject()" class="bg-dark text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-slate-800 transition-colors">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-      내 프로젝트 저장하기
+      저장
     </button>
   </div>
 
@@ -1296,7 +1310,7 @@ body { background: #fff; color: #0F172A; }
       <button id="ds-inquiry" onclick="switchDataset('inquiry')" class="px-4 py-2 text-xs font-bold border border-border text-muted rounded-lg hover:bg-surface transition-all">신규문의 데이터셋</button>
     </div>
     
-    <div class="flex-1 min-h-0 overflow-auto px-6 py-4">
+    <div class="raw-editor-body">
       <!-- CUSTOM START SCREEN: shown when coming from gallery with no data -->
       <div id="gen-start-screen" class="hide h-full flex items-center justify-center py-4">
         <div class="w-full max-w-lg">
@@ -1529,12 +1543,28 @@ body { background: #fff; color: #0F172A; }
       </div>
       <div id="studio-canvas-wrap" class="hide flex-1 flex flex-col overflow-hidden">
         <div class="bg-white border-b border-border px-5 py-3 flex items-center justify-between shrink-0">
-          <button onclick="goToGalleryForChartChange()"
-            class="flex items-center gap-2 px-3 py-1.5 border border-border rounded-lg text-xs font-semibold text-muted hover:text-dark hover:bg-surface transition-colors">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-            차트 유형 변경
-          </button>
+          <div class="flex items-center gap-4 min-w-0 flex-1">
+            <button onclick="goToGalleryForChartChange()"
+              class="flex items-center gap-2 px-3 py-1.5 border border-border rounded-lg text-xs font-semibold text-muted hover:text-dark hover:bg-surface transition-colors shrink-0">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+              차트 유형 변경
+            </button>
+            <div class="min-w-0 max-w-md flex-1">
+              <input id="project-title-input" class="project-title-input" value="제목 없는 시각화" placeholder="프로젝트 이름을 입력해주세요" oninput="updateProjectTitle(this.value)" onblur="normalizeProjectTitle()">
+              <p class="text-[10px] text-slate-400 font-semibold mt-0.5">프로젝트 이름은 저장 목록과 내보내기 파일명에 사용됩니다.</p>
+            </div>
+          </div>
           <div class="flex items-center gap-3">
+            <button onclick="saveCurrentProject()" class="bg-dark hover:bg-slate-800 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all shadow-sm flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              저장
+            </button>
+            <div class="relative">
+              <button onclick="openExportMenu()" class="bg-white hover:bg-surface border border-border text-dark text-xs font-bold py-2 px-4 rounded-lg transition-all flex items-center gap-1.5">
+                내보내기
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+            </div>
             <button onclick="addChartToDashboard()" class="bg-accent hover:bg-indigo-700 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all shadow-sm flex items-center gap-1.5">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
               대시보드에 추가
@@ -1945,6 +1975,106 @@ body { background: #fff; color: #0F172A; }
   </div>
 </div>
 
+<!-- Export Menu / Prototype Notice -->
+<div id="export-menu-backdrop" class="hide fixed inset-0 bg-slate-900/20 z-[1200]" onclick="closeExportMenu()"></div>
+<div id="export-menu" class="hide fixed top-20 right-8 w-[420px] max-w-[calc(100vw-32px)] bg-white border border-border rounded-2xl shadow-2xl z-[1201] overflow-hidden">
+  <div class="px-5 py-4 border-b border-border flex items-start justify-between gap-4">
+    <div>
+      <h3 class="text-base font-black text-dark">내보내기</h3>
+      <p class="text-xs text-muted font-semibold mt-1">HTML 프로토타입에서 실제 지원되는 형식과 정식 서비스 예정 기능을 구분했습니다.</p>
+    </div>
+    <button onclick="closeExportMenu()" class="w-8 h-8 rounded-lg hover:bg-surface flex items-center justify-center text-muted hover:text-dark transition-colors" title="닫기">×</button>
+  </div>
+  <div class="px-5 py-4 border-b border-border bg-surface/70">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-black text-dark">이미지 배율</span>
+      <div class="flex rounded-lg border border-border overflow-hidden bg-white">
+        <button class="export-scale-btn px-3 py-1.5 text-xs font-black text-muted hover:bg-surface" data-scale="1" onclick="setExportScale(1)">1x</button>
+        <button class="export-scale-btn px-3 py-1.5 text-xs font-black bg-accent text-white" data-scale="2" onclick="setExportScale(2)">2x</button>
+        <button class="export-scale-btn px-3 py-1.5 text-xs font-black text-muted hover:bg-surface" data-scale="3" onclick="setExportScale(3)">3x</button>
+      </div>
+    </div>
+  </div>
+  <div class="max-h-[62vh] overflow-y-auto p-3 space-y-2">
+    <button onclick="exportCurrentChart('png')" class="w-full text-left border border-border hover:border-accent hover:bg-indigo-50/40 rounded-xl p-4 transition-all">
+      <div class="flex gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-accent flex items-center justify-center text-xs font-black shrink-0">PNG</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-sm font-black text-dark">PNG로 내보내기</span>
+            <span class="text-[10px] font-black text-white bg-accent px-2 py-0.5 rounded-full">추천</span>
+          </div>
+          <p class="text-xs text-muted font-semibold">고품질 이미지 · 발표/보고서용</p>
+        </div>
+      </div>
+    </button>
+    <button onclick="exportCurrentChart('jpg')" class="w-full text-left border border-border hover:border-accent hover:bg-indigo-50/40 rounded-xl p-4 transition-all">
+      <div class="flex gap-3">
+        <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-black shrink-0">JPG</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-sm font-black text-dark">JPG로 내보내기</span>
+            <span class="text-[10px] font-black text-white bg-accent px-2 py-0.5 rounded-full">추천</span>
+          </div>
+          <p class="text-xs text-muted font-semibold">공유에 적합한 이미지</p>
+        </div>
+      </div>
+    </button>
+    <button onclick="exportCurrentChart('pdf')" class="w-full text-left border border-border hover:border-accent hover:bg-indigo-50/40 rounded-xl p-4 transition-all">
+      <div class="flex gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xs font-black shrink-0">PDF</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-black text-dark mb-1">PDF 저장/인쇄</div>
+          <p class="text-xs text-muted font-semibold">문서에 넣기 좋은 인쇄용 파일</p>
+        </div>
+      </div>
+    </button>
+    <div class="export-option-disabled border border-border rounded-xl p-4">
+      <div class="flex gap-3">
+        <div class="w-10 h-10 rounded-xl bg-surface text-muted flex items-center justify-center text-xs font-black shrink-0">SVG</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1"><span class="text-sm font-black text-dark">SVG로 내보내기</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">정식 서비스 예정</span></div>
+          <p class="text-xs text-muted font-semibold">벡터 그래픽 · 편집용</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-1">백엔드/프론트엔드 연동 후 제공 예정입니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="export-option-disabled border border-border rounded-xl p-4">
+      <div class="flex gap-3">
+        <div class="w-10 h-10 rounded-xl bg-surface text-muted flex items-center justify-center text-xs font-black shrink-0">PPT</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1"><span class="text-sm font-black text-dark">PPTX로 내보내기</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">정식 서비스 예정</span></div>
+          <p class="text-xs text-muted font-semibold">발표자료에 바로 넣기 좋은 파일</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-1">백엔드/프론트엔드 연동 후 제공 예정입니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="export-option-disabled border border-border rounded-xl p-4">
+      <div class="flex gap-3">
+        <div class="w-10 h-10 rounded-xl bg-surface text-muted flex items-center justify-center text-xs font-black shrink-0">MP4</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-2 mb-1"><span class="text-sm font-black text-dark">MP4로 내보내기</span><span id="mp4-reco-badge" class="hide text-[10px] font-black text-white bg-primary px-2 py-0.5 rounded-full">정식 서비스 추천</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">정식 서비스 예정</span></div>
+          <p class="text-xs text-muted font-semibold">레이싱 차트 등 애니메이션용</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-1">백엔드/프론트엔드 연동 후 제공 예정입니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="export-option-disabled border border-border rounded-xl p-4">
+      <div class="flex gap-3">
+        <div class="w-10 h-10 rounded-xl bg-surface text-muted flex items-center justify-center text-xs font-black shrink-0">GIF</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1"><span class="text-sm font-black text-dark">GIF로 내보내기</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">정식 서비스 예정</span></div>
+          <p class="text-xs text-muted font-semibold">소리 없이 움직이는 이미지</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-1">백엔드/프론트엔드 연동 후 제공 예정입니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="px-5 py-4 bg-indigo-50 border-t border-accent/15 text-[11px] leading-relaxed text-accent font-bold">
+    현재 HTML 프로토타입에서는 PNG, JPG, PDF 저장/인쇄를 지원합니다. SVG, PPTX, MP4, GIF는 MAC 정식 서비스에서 제공 예정입니다.
+  </div>
+</div>
+
 </main>
 
 <script>
@@ -1959,9 +2089,14 @@ let selectedCategory = 'acad';
 let studioCurrentType = null;
 let studioCurrentColor = '#4F46E5';
 let dashboardCharts = [];
+let currentProjectTitle = '제목 없는 시각화';
+let currentProjectId = null;
+let savedProjects = [];
+let exportScale = 2;
 
 // ── localStorage 자동 저장 / 복원 ─────────────────────────────────
 const _LSK = 'mac_workspace_v1';
+const _PROJECTS_KEY = 'mac_saved_projects_v1';
 
 function saveWorkspace() {
   try {
@@ -1972,12 +2107,15 @@ function saveWorkspace() {
       dataGeneratedHeaders,
       dataFirstRowAsHeader,
       dataCheckIsTransposed,
+      currentProjectId,
+      currentProjectTitle,
     }));
   } catch(e) { /* quota 초과 등 무시 */ }
 }
 
 function loadWorkspace() {
   try {
+    savedProjects = loadSavedProjects();
     const raw = localStorage.getItem(_LSK);
     if (!raw) return;
     const d = JSON.parse(raw);
@@ -1991,9 +2129,364 @@ function loadWorkspace() {
       dataFirstRowAsHeader = d.dataFirstRowAsHeader !== false;
       dataCheckIsTransposed = Boolean(d.dataCheckIsTransposed);
     }
+    if (Array.isArray(d.savedProjects) && d.savedProjects.length > savedProjects.length) {
+      savedProjects = d.savedProjects;
+      saveSavedProjects(savedProjects);
+    }
+    currentProjectId = d.currentProjectId || null;
+    currentProjectTitle = d.currentProjectTitle || currentProjectTitle;
   } catch(e) {}
 }
 // ──────────────────────────────────────────────────────────────────
+
+function clonePlain(value) {
+  return JSON.parse(JSON.stringify(value ?? null));
+}
+
+function loadSavedProjects() {
+  try {
+    const raw = localStorage.getItem(_PROJECTS_KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list : [];
+  } catch(e) {
+    return [];
+  }
+}
+
+function saveSavedProjects(list=savedProjects) {
+  savedProjects = Array.isArray(list) ? list : [];
+  try {
+    localStorage.setItem(_PROJECTS_KEY, JSON.stringify(savedProjects));
+  } catch(e) {
+    showToast('저장 공간이 부족해 프로젝트를 저장하지 못했습니다.', 'warn');
+  }
+}
+
+function updateProjectTitle(value) {
+  currentProjectTitle = String(value ?? '').trimStart();
+  saveWorkspace();
+}
+
+function normalizeProjectTitle() {
+  currentProjectTitle = String(currentProjectTitle || '').trim() || '제목 없는 시각화';
+  syncProjectTitleInput();
+  saveWorkspace();
+}
+
+function syncProjectTitleInput() {
+  const input = document.getElementById('project-title-input');
+  if (input && input.value !== currentProjectTitle) input.value = currentProjectTitle;
+}
+
+function resetProjectIdentity(title='제목 없는 시각화') {
+  currentProjectId = null;
+  currentProjectTitle = title;
+  syncProjectTitleInput();
+  saveWorkspace();
+}
+
+function chartTypeLabel(type) {
+  const hit = (typeof galleryData !== 'undefined' ? galleryData : []).find(c => c.chartType === type);
+  return hit ? hit.title : (type || '차트');
+}
+
+function formatProjectDate(value) {
+  const d = value ? new Date(value) : new Date();
+  const now = new Date();
+  if (isNaN(d.getTime())) return '';
+  const diff = now - d;
+  if (diff < 60 * 1000) return '방금 전';
+  if (d.toDateString() === now.toDateString()) return '오늘';
+  return d.toISOString().slice(0, 10);
+}
+
+function createPlaceholderThumbnail() {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400">
+    <rect width="640" height="400" fill="#F8FAFC"/>
+    <rect x="72" y="70" width="496" height="260" rx="24" fill="#fff" stroke="#E2E8F0"/>
+    <rect x="130" y="230" width="54" height="62" rx="8" fill="#BFDBFE"/>
+    <rect x="210" y="170" width="54" height="122" rx="8" fill="#4F46E5"/>
+    <rect x="290" y="198" width="54" height="94" rx="8" fill="#FF6B35"/>
+    <rect x="370" y="138" width="54" height="154" rx="8" fill="#10B981"/>
+    <rect x="450" y="205" width="54" height="87" rx="8" fill="#A78BFA"/>
+    <text x="320" y="116" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="800" fill="#0F172A">MAC Visualization</text>
+  </svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+function createProjectThumbnail() {
+  const canvas = document.getElementById('studio-canvas');
+  if (canvas && canvas.width > 0 && canvas.height > 0 && studioCurrentType) {
+    try {
+      const thumb = document.createElement('canvas');
+      thumb.width = 640;
+      thumb.height = 400;
+      const ctx = thumb.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, thumb.width, thumb.height);
+      const scale = Math.min(thumb.width / canvas.width, thumb.height / canvas.height);
+      const w = canvas.width * scale;
+      const h = canvas.height * scale;
+      ctx.drawImage(canvas, (thumb.width - w) / 2, (thumb.height - h) / 2, w, h);
+      return thumb.toDataURL('image/jpeg', 0.82);
+    } catch(e) {}
+  }
+  return createPlaceholderThumbnail();
+}
+
+function saveCurrentProject() {
+  normalizeProjectTitle();
+  const now = new Date().toISOString();
+  const id = currentProjectId || `proj-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  const project = {
+    id,
+    title: currentProjectTitle,
+    createdAt: now,
+    updatedAt: now,
+    chartType: studioCurrentType,
+    chartColor: studioCurrentColor,
+    chartProps: clonePlain(chartProps),
+    genHeaders: clonePlain(genHeaders),
+    genRows: clonePlain(genRows),
+    dataGeneratedHeaders: clonePlain(dataGeneratedHeaders),
+    dataFirstRowAsHeader,
+    dataCheckIsTransposed,
+    selectedCategory,
+    dashboardCharts: clonePlain(dashboardCharts),
+    thumbnail: createProjectThumbnail()
+  };
+  const existingIdx = savedProjects.findIndex(p => p.id === id);
+  if (existingIdx >= 0) {
+    project.createdAt = savedProjects[existingIdx].createdAt || now;
+    savedProjects[existingIdx] = project;
+  } else {
+    savedProjects.unshift(project);
+  }
+  currentProjectId = id;
+  saveSavedProjects(savedProjects);
+  saveWorkspace();
+  renderProjectsList();
+  showToast('프로젝트가 저장되었습니다.', 'success');
+}
+
+function renderProjectsList() {
+  savedProjects = loadSavedProjects();
+  const query = (document.getElementById('project-search')?.value || '').trim().toLowerCase();
+  const list = savedProjects
+    .filter(p => !query || String(p.title || '').toLowerCase().includes(query))
+    .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+  const empty = document.getElementById('project-empty-state');
+  const wrap = document.getElementById('project-list-wrap');
+  const grid = document.getElementById('project-grid');
+  if (!empty || !wrap || !grid) return;
+  const hasAny = savedProjects.length > 0;
+  empty.classList.toggle('hide', hasAny);
+  wrap.classList.toggle('hide', !hasAny);
+  if (!hasAny) {
+    grid.innerHTML = '';
+    return;
+  }
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="col-span-full bg-white border border-border rounded-2xl p-10 text-center text-sm font-bold text-muted">검색 결과가 없습니다.</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(project => `
+    <article class="bg-white border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-accent/40 transition-all group cursor-pointer" onclick="openSavedProject('${escQ(project.id)}')">
+      <div class="project-card-thumb">
+        <img src="${project.thumbnail || createPlaceholderThumbnail()}" alt="${escHtml(project.title || '프로젝트 썸네일')}">
+      </div>
+      <div class="p-4">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <h3 class="text-sm font-black text-dark truncate">${escHtml(project.title || '제목 없는 시각화')}</h3>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="text-[11px] font-black text-accent bg-indigo-50 border border-accent/15 rounded-full px-2 py-0.5">${escHtml(chartTypeLabel(project.chartType))}</span>
+              <span class="text-[11px] font-bold text-muted">${formatProjectDate(project.updatedAt || project.createdAt)}</span>
+            </div>
+          </div>
+          <button onclick="event.stopPropagation(); deleteSavedProject('${escQ(project.id)}')" title="프로젝트 삭제" class="opacity-35 group-hover:opacity-100 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg w-8 h-8 flex items-center justify-center transition-all">×</button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
+
+function openSavedProject(projectId) {
+  const project = loadSavedProjects().find(p => p.id === projectId);
+  if (!project) {
+    showToast('프로젝트를 찾을 수 없습니다.', 'warn');
+    return;
+  }
+  currentProjectId = project.id;
+  currentProjectTitle = project.title || '제목 없는 시각화';
+  studioCurrentType = project.chartType || null;
+  studioCurrentColor = project.chartColor || '#4F46E5';
+  selectedCategory = project.selectedCategory || 'custom';
+  genHeaders = Array.isArray(project.genHeaders) ? clonePlain(project.genHeaders) : genHeaders;
+  genRows = Array.isArray(project.genRows) ? clonePlain(project.genRows) : genRows;
+  dataGeneratedHeaders = Array.isArray(project.dataGeneratedHeaders) ? clonePlain(project.dataGeneratedHeaders) : genHeaders.map(() => false);
+  dataFirstRowAsHeader = project.dataFirstRowAsHeader !== false;
+  dataCheckIsTransposed = Boolean(project.dataCheckIsTransposed);
+  dashboardCharts = Array.isArray(project.dashboardCharts) ? clonePlain(project.dashboardCharts) : [];
+  if (project.chartProps) Object.assign(chartProps, clonePlain(project.chartProps));
+  resetDataHistory();
+  window.isInCreateFlow = true;
+  saveWorkspace();
+  go('data-editor');
+  requestAnimationFrame(() => {
+    syncProjectTitleInput();
+    updateGenAxisSelects();
+    syncGeneralDataToChart();
+    const studioBtn = document.querySelectorAll('.tab-btn')[2] || null;
+    switchEditorTab('studio', studioBtn);
+    if (studioCurrentType) drawStudioChart(studioCurrentType, studioCurrentColor);
+  });
+}
+
+function deleteSavedProject(projectId) {
+  if (!confirm('이 프로젝트를 삭제할까요?')) return;
+  savedProjects = loadSavedProjects().filter(p => p.id !== projectId);
+  if (currentProjectId === projectId) currentProjectId = null;
+  saveSavedProjects(savedProjects);
+  saveWorkspace();
+  renderProjectsList();
+  showToast('프로젝트가 삭제되었습니다.', 'info');
+}
+
+function getExportFileName(ext='png') {
+  const base = (currentProjectTitle || '제목 없는 시각화')
+    .trim()
+    .replace(/[\\/:*?"<>|]/g, '')
+    .replace(/\s+/g, '_')
+    || '제목_없는_시각화';
+  return `${base}.${ext}`;
+}
+
+function setExportScale(scale) {
+  exportScale = Math.max(1, Math.min(3, Number(scale) || 2));
+  document.querySelectorAll('.export-scale-btn').forEach(btn => {
+    const active = Number(btn.dataset.scale) === exportScale;
+    btn.className = active
+      ? 'export-scale-btn px-3 py-1.5 text-xs font-black bg-accent text-white'
+      : 'export-scale-btn px-3 py-1.5 text-xs font-black text-muted hover:bg-surface';
+  });
+}
+
+function openExportMenu() {
+  const menu = document.getElementById('export-menu');
+  const backdrop = document.getElementById('export-menu-backdrop');
+  const mp4Badge = document.getElementById('mp4-reco-badge');
+  if (mp4Badge) mp4Badge.classList.toggle('hide', studioCurrentType !== 'racing');
+  if (menu) menu.classList.remove('hide');
+  if (backdrop) backdrop.classList.remove('hide');
+  setExportScale(exportScale);
+}
+
+function closeExportMenu() {
+  document.getElementById('export-menu')?.classList.add('hide');
+  document.getElementById('export-menu-backdrop')?.classList.add('hide');
+}
+
+function getActiveStudioCanvas() {
+  const canvas = document.getElementById('studio-canvas');
+  if (!canvas || !studioCurrentType || canvas.width <= 0 || canvas.height <= 0) return null;
+  return canvas;
+}
+
+function exportCurrentChart(format) {
+  if (format === 'pdf') {
+    openPrintPdfView();
+    return;
+  }
+  if (format === 'png' || format === 'jpg') {
+    downloadCanvasAsImage(format, exportScale);
+    return;
+  }
+  showToast('이 형식은 MAC 정식 서비스에서 제공 예정입니다.', 'info');
+}
+
+function downloadCanvasAsImage(format='png', scale=2) {
+  const canvas = getActiveStudioCanvas();
+  if (!canvas) {
+    showToast('내보낼 차트가 없습니다.', 'warn');
+    return;
+  }
+  try {
+    const safeScale = Math.max(1, Math.min(3, Number(scale) || 2));
+    const tmp = document.createElement('canvas');
+    tmp.width = Math.max(1, Math.round(canvas.width * safeScale));
+    tmp.height = Math.max(1, Math.round(canvas.height * safeScale));
+    const ctx = tmp.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    if (format === 'jpg') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, tmp.width, tmp.height);
+    }
+    ctx.drawImage(canvas, 0, 0, tmp.width, tmp.height);
+    const mime = format === 'jpg' ? 'image/jpeg' : 'image/png';
+    const dataUrl = tmp.toDataURL(mime, format === 'jpg' ? 0.92 : undefined);
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = getExportFileName(format === 'jpg' ? 'jpg' : 'png');
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    showToast(`${format.toUpperCase()} 파일을 내보냈습니다.`, 'success');
+  } catch(e) {
+    showToast('이미지를 내보내는 중 오류가 발생했습니다.', 'error');
+  }
+}
+
+function openPrintPdfView() {
+  const canvas = getActiveStudioCanvas();
+  if (!canvas) {
+    showToast('내보낼 차트가 없습니다.', 'warn');
+    return;
+  }
+  let chartImage = '';
+  try {
+    chartImage = canvas.toDataURL('image/png');
+  } catch(e) {
+    showToast('인쇄용 이미지를 만들 수 없습니다.', 'error');
+    return;
+  }
+  const title = escHtml(currentProjectTitle || '제목 없는 시각화');
+  const printWin = window.open('', '_blank', 'width=1000,height=800');
+  if (!printWin) {
+    showToast('팝업이 차단되었습니다. 브라우저에서 팝업을 허용한 뒤 다시 시도해주세요.', 'warn');
+    return;
+  }
+  printWin.document.write(`<!DOCTYPE html>
+  <html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <title>${title} - PDF 저장/인쇄</title>
+    <style>
+      body{margin:0;background:#f8fafc;font-family:Arial,'Noto Sans KR',sans-serif;color:#0f172a}
+      .page{max-width:960px;margin:32px auto;background:#fff;padding:40px;border:1px solid #e2e8f0;border-radius:18px}
+      h1{font-size:24px;margin:0 0 20px;font-weight:900}
+      img{width:100%;height:auto;border:1px solid #e2e8f0;border-radius:14px}
+      .actions{margin-top:22px;display:flex;gap:8px}
+      button{border:0;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer}
+      .primary{background:#0f172a;color:#fff}.muted{background:#f1f5f9;color:#475569}
+      @media print{body{background:#fff}.page{margin:0;border:0;border-radius:0}.actions{display:none}}
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <h1>${title}</h1>
+      <img src="${chartImage}" alt="${title}">
+      <div class="actions">
+        <button class="primary" onclick="window.print()">PDF 저장/인쇄</button>
+        <button class="muted" onclick="window.close()">닫기</button>
+      </div>
+    </main>
+    <script>window.addEventListener('load',()=>setTimeout(()=>window.print(),300));<\/script>
+  </body>
+  </html>`);
+  printWin.document.close();
+}
 
 // Interactive Properties State
 const chartProps = {
@@ -2269,6 +2762,7 @@ function startAutoGenerate() {
       clearInterval(interval);
       setTimeout(() => {
         selectedCategory = 'custom';
+        resetProjectIdentity();
         go('data-check');
       }, 400);
     }
@@ -2936,6 +3430,7 @@ function goToGalleryForChartChange() {
 
 // ── 갤러리 시작 화면 핸들러 ─────────────────────────────────────────
 function startCustomInput() {
+  resetProjectIdentity();
   genHeaders = ['기준 라벨 (X축)', '데이터 값 1 (Y축)', '데이터 값 2'];
   genRows    = [['', '', '']];
   dataGeneratedHeaders = [false, false, false];
@@ -4047,12 +4542,34 @@ function consumePendingData() {
 function startBlankDataCheck() {
   window.pendingCSVData = null;
   selectedCategory = 'custom';
+  resetProjectIdentity();
   genHeaders = ['기준 라벨 (X축)', '데이터 값 1 (Y축)', '데이터 값 2'];
   genRows = [['', '', '']];
   dataGeneratedHeaders = [false, false, false];
   dataFirstRowAsHeader = true;
   dataCheckIsTransposed = false;
   resetDataHistory();
+  go('data-check');
+}
+
+function runSampleDemo() {
+  selectedCategory = 'custom';
+  resetProjectIdentity('샘플 매출 시각화');
+  genHeaders = ['연월', '매출액', '영업비용', '순이익'];
+  genRows = [
+    ['2024-01', '12000', '8000', '4000'],
+    ['2024-02', '15000', '8500', '6500'],
+    ['2024-03', '14000', '9000', '5000'],
+    ['2024-04', '18000', '9500', '8500'],
+    ['2024-05', '20000', '10000', '10000'],
+  ];
+  dataGeneratedHeaders = [false, false, false, false];
+  dataFirstRowAsHeader = true;
+  dataCheckIsTransposed = false;
+  window.pendingCSVData = null;
+  window.isInCreateFlow = true;
+  resetDataHistory();
+  refreshGeneralDataViews();
   go('data-check');
 }
 
@@ -4155,7 +4672,7 @@ function renderSpreadsheetTable(theadId, tbodyId, options={}) {
   const query = options.searchId ? (document.getElementById(options.searchId)?.value || '').trim() : '';
   let headHtml = '<tr><th class="dw-row-index">#</th>';
   genHeaders.forEach((header, cIdx) => {
-    headHtml += `<th class="min-w-[150px] ${axisHighlightClass(cIdx, context)}">
+    headHtml += `<th class="min-w-[124px] ${axisHighlightClass(cIdx, context)}">
       <div class="flex items-center gap-1 group">
         <span class="dw-col-badge ml-2">${columnBadge(cIdx)}</span>
         <input class="dw-head-input" value="${escHtml(header)}" onchange="updateGeneralHeader(${cIdx}, this.value, '${context}')">
@@ -4259,33 +4776,117 @@ function drawMiniPreview() {
     ctx.fillStyle = '#94A3B8';
     ctx.font = '700 12px Plus Jakarta Sans, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('미리볼 숫자 데이터가 없습니다', cssW/2, cssH/2);
+    ctx.fillText('미리보기에 사용할 숫자 열을 선택하세요.', cssW/2, cssH/2);
     return;
   }
-  const labels = dataset.labels.slice(0, 8);
-  const values = dataset.values.slice(0, 8);
-  const maxVal = Math.max(...values, 1);
-  const pad = { l:24, r:12, t:16, b:28 };
-  const chartW = cssW - pad.l - pad.r;
-  const chartH = cssH - pad.t - pad.b;
-  ctx.strokeStyle = '#E2E8F0';
-  ctx.lineWidth = 1;
-  for (let i=0; i<=3; i++) {
-    const y = pad.t + chartH - chartH * (i/3);
-    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + chartW, y); ctx.stroke();
-  }
-  const gap = chartW / Math.max(values.length, 1);
-  values.forEach((v, i) => {
-    const h = (v / maxVal) * chartH;
-    const bw = Math.max(8, gap * .58);
-    const x = pad.l + gap * i + (gap - bw) / 2;
-    const y = pad.t + chartH - h;
-    ctx.fillStyle = '#4F46E5';
-    roundRect(ctx, x, y, bw, h, 4);
-    ctx.fillStyle = '#64748B';
-    ctx.font = '700 9px Plus Jakarta Sans, sans-serif';
+  const limit = chartProps.topN > 0 ? Math.min(chartProps.topN, 5) : 5;
+  const items = dataset.labels.map((label, i) => ({
+    label: String(label || `행 ${i + 1}`),
+    value: Math.max(0, Number(dataset.values[i]) || 0)
+  })).filter(item => item.value > 0).slice(0, limit);
+  if (!items.length) {
+    ctx.fillStyle = '#94A3B8';
+    ctx.font = '700 12px Plus Jakarta Sans, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(String(labels[i] || '').slice(0, 5), x + bw/2, cssH - 10);
+    ctx.fillText('미리보기에 사용할 숫자 열을 선택하세요.', cssW/2, cssH/2);
+    return;
+  }
+
+  ctx.fillStyle = '#0F172A';
+  ctx.font = '900 11px Plus Jakarta Sans, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(chartTypeLabel(studioCurrentType || 'bar'), 12, 17);
+
+  if (studioCurrentType === 'pie' || studioCurrentType === 'donut') {
+    const total = items.reduce((sum, item) => sum + item.value, 0) || 1;
+    const cx = cssW * 0.36, cy = cssH * 0.55, r = Math.min(cssW, cssH) * 0.27;
+    let angle = -Math.PI / 2;
+    items.forEach((item, i) => {
+      const sweep = (item.value / total) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, angle, angle + sweep);
+      ctx.closePath();
+      ctx.fillStyle = ['#4F46E5','#FF6B35','#10B981','#38BDF8','#A78BFA'][i % 5];
+      ctx.fill();
+      angle += sweep;
+    });
+    if (studioCurrentType === 'donut') {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * .52, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+    }
+    items.forEach((item, i) => {
+      const y = 42 + i * 20;
+      ctx.fillStyle = ['#4F46E5','#FF6B35','#10B981','#38BDF8','#A78BFA'][i % 5];
+      roundRect(ctx, cssW * .62, y - 8, 10, 10, 3);
+      ctx.fillStyle = '#475569';
+      ctx.font = '800 10px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(item.label.slice(0, 9), cssW * .62 + 16, y);
+      ctx.textAlign = 'right';
+      ctx.fillText(Math.round((item.value / total) * 100) + '%', cssW - 12, y);
+    });
+    return;
+  }
+
+  if (studioCurrentType === 'line' || studioCurrentType === 'area') {
+    const pad = { l:18, r:12, t:34, b:20 };
+    const w = cssW - pad.l - pad.r;
+    const h = cssH - pad.t - pad.b;
+    const maxVal = Math.max(...items.map(i => i.value), 1);
+    const points = items.map((item, i) => ({
+      x: pad.l + (items.length === 1 ? w / 2 : i * (w / (items.length - 1))),
+      y: pad.t + h - (item.value / maxVal) * h,
+      item
+    }));
+    ctx.strokeStyle = '#E2E8F0';
+    ctx.lineWidth = 1;
+    for (let i=0; i<=2; i++) {
+      const y = pad.t + h * (i / 2);
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + w, y); ctx.stroke();
+    }
+    if (studioCurrentType === 'area') {
+      ctx.beginPath();
+      points.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+      ctx.lineTo(points[points.length - 1].x, pad.t + h);
+      ctx.lineTo(points[0].x, pad.t + h);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(79,70,229,.14)';
+      ctx.fill();
+    }
+    ctx.beginPath();
+    points.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+    ctx.strokeStyle = '#4F46E5';
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+    points.forEach(p => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
+      ctx.fillStyle = '#4F46E5'; ctx.fill();
+    });
+    return;
+  }
+
+  const maxVal = Math.max(...items.map(i => i.value), 1);
+  const labelW = Math.min(92, cssW * .34);
+  const barX = labelW + 14;
+  const barW = cssW - barX - 44;
+  const rowH = Math.min(22, (cssH - 36) / items.length);
+  items.forEach((item, i) => {
+    const y = 34 + i * rowH;
+    ctx.fillStyle = '#475569';
+    ctx.font = '800 10.5px Plus Jakarta Sans, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(item.label.slice(0, 12), labelW, y + 12);
+    ctx.fillStyle = '#EEF2FF';
+    roundRect(ctx, barX, y + 3, barW, 10, 5);
+    ctx.fillStyle = '#4F46E5';
+    roundRect(ctx, barX, y + 3, Math.max(3, (item.value / maxVal) * barW), 10, 5);
+    ctx.fillStyle = '#0F172A';
+    ctx.font = '900 10px Plus Jakarta Sans, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(String(Math.round(item.value)), barX + barW + 8, y + 12);
   });
 }
 
@@ -4662,6 +5263,7 @@ function go(pageId, tabId=null) {
   if(pageId==='dashboard') switchTab(tabId||'projects');
   if(pageId==='data-editor') {
     renderEditorPanels();
+    syncProjectTitleInput();
     
     // View Toggle Logic
     if(selectedCategory === 'custom') {
@@ -4707,6 +5309,7 @@ function switchTab(tabId) {
   if(tabId==='templates') {
     renderCategoryGrid('category-grid', false);
   }
+  if(tabId==='projects') renderProjectsList();
   if(tabId==='gallery') renderGallery();
   else renderGalleryFlowProgress();
 }
@@ -4721,6 +5324,7 @@ function switchEditorTab(tab, btn) {
   else { const btns=document.querySelectorAll('.tab-btn'); if(btns[0]) btns[0].classList.add('active'); }
   
   if(tab==='studio') {
+    syncProjectTitleInput();
     if(!studioCurrentType) {
       document.getElementById('studio-chart-area').classList.remove('hide');
       document.getElementById('studio-canvas-wrap').classList.add('hide');
@@ -5076,40 +5680,37 @@ async function generateAIReport(data, tone) {
     analytical: '분석적이고 데이터 중심의',
   };
   const toneStr = toneMap[tone] || toneMap.default;
-  const scoreStr = data.subjects.map((s, i) =>
-    `${s}: ${data.current[i]}점 (이전: ${data.prev[i]}점, 반평균: ${Math.round(data.avg[i])}점)`
-  ).join(', ');
+  const rows = data.subjects.map((subject, i) => ({
+    subject,
+    current: Number(data.current[i]) || 0,
+    prev: Number(data.prev[i]) || 0,
+    avg: Number(data.avg[i]) || 0,
+  })).map(row => ({
+    ...row,
+    delta: row.current - row.prev,
+    vsAvg: row.current - row.avg,
+  }));
+  const best = rows.slice().sort((a, b) => b.current - a.current)[0];
+  const improved = rows.slice().sort((a, b) => b.delta - a.delta)[0];
+  const needsCare = rows.slice().sort((a, b) => a.vsAvg - b.vsAvg)[0];
+  const avgScore = Math.round(rows.reduce((sum, r) => sum + r.current, 0) / Math.max(rows.length, 1));
+  const upCount = rows.filter(r => r.delta > 0).length;
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:800,
-        messages:[{
-          role:'user',
-          content:`학원 학생 성적을 분석해 ${toneStr} 코멘트를 작성해주세요.
-학생: ${data.name} | 반: ${data.klass}
-과목별 성적 → ${scoreStr}
+  const strengthTone = tone === 'encouraging'
+    ? `${data.name} 학생은 ${best.subject}에서 ${best.current}점으로 가장 안정적인 성과를 보이고 있습니다. 특히 ${improved.subject}은 이전 대비 ${Math.abs(improved.delta)}점 ${improved.delta >= 0 ? '상승해' : '변동해'} 긍정적인 변화를 확인할 수 있습니다.`
+    : `${data.name} 학생의 평균 점수는 ${avgScore}점이며, ${best.subject}에서 가장 높은 성취도를 보입니다. ${upCount}개 과목에서 이전 시험 대비 상승 흐름이 나타났습니다.`;
+  const weaknessTone = tone === 'analytical'
+    ? `${needsCare.subject}은 반 평균 대비 ${Math.abs(Math.round(needsCare.vsAvg))}점 ${needsCare.vsAvg >= 0 ? '높지만 추가 확장이 가능합니다' : '낮아 우선 점검이 필요합니다'}. 과목별 편차를 줄이기 위해 취약 단원과 오답 유형을 분리해 보는 것이 좋습니다.`
+    : `${needsCare.subject}은 조금 더 세심하게 살펴볼 필요가 있습니다. 점수가 낮은 과목도 작은 단원부터 다시 잡으면 다음 시험에서 충분히 개선할 수 있습니다.`;
+  const actions = [
+    `${needsCare.subject} 오답을 유형별로 나누어 20분 복습 루틴을 만드세요.`,
+    `${best.subject}의 학습 방식 중 효과가 있었던 습관을 다른 과목에도 적용하세요.`,
+    `다음 상담 전까지 ${improved.subject} 변화 추이를 한 번 더 확인하세요.`
+  ];
 
-아래 JSON 형식으로만 응답하세요 (다른 텍스트 없이):
-{"strength":"강점 2문장","weakness":"약점 2문장","actions":["액션1","액션2","액션3"]}`
-        }]
-      })
-    });
-    const json = await res.json();
-    const raw  = json.content?.[0]?.text || '{}';
-    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
-    document.getElementById('rpt-strength').textContent  = parsed.strength  || '-';
-    document.getElementById('rpt-weakness').textContent  = parsed.weakness  || '-';
-    document.getElementById('rpt-actions').innerHTML =
-      (parsed.actions || []).map(a => `<li>· ${a}</li>`).join('');
-  } catch(e) {
-    document.getElementById('rpt-strength').textContent = '분석을 불러오지 못했습니다.';
-    document.getElementById('rpt-weakness').textContent = '잠시 후 재분석을 시도해주세요.';
-    document.getElementById('rpt-actions').innerHTML = '<li>· 재분석 버튼을 눌러주세요</li>';
-  }
+  document.getElementById('rpt-strength').textContent  = strengthTone + ` (${toneStr} 톤 · HTML 프로토타입 로컬 분석)`;
+  document.getElementById('rpt-weakness').textContent  = weaknessTone;
+  document.getElementById('rpt-actions').innerHTML = actions.map(a => `<li>· ${a}</li>`).join('');
 }
 
 </script>
