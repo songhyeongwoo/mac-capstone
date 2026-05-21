@@ -112,6 +112,15 @@ body { background: #fff; color: #0F172A; }
 .dt-header th { padding:10px 14px; font-size:12px; font-weight:700; color:#64748B; background:#F8FAFC; border-bottom:2px solid #E2E8F0; text-align:left; }
 .dt-body td { padding:10px 14px; font-size:13px; color:#374151; border-bottom:1px solid #F1F5F9; }
 .dt-body tr:hover td { background:#F8FAFF; }
+.create-flow-progress { display:flex; align-items:center; justify-content:center; gap:8px; min-width:0; }
+.create-flow-step { display:flex; align-items:center; gap:6px; color:#94A3B8; font-size:12px; font-weight:800; white-space:nowrap; }
+.create-flow-step .num { width:22px; height:22px; border-radius:999px; display:flex; align-items:center; justify-content:center; border:1px solid #CBD5E1; background:#F8FAFC; color:#94A3B8; font-size:10px; font-weight:900; }
+.create-flow-step.done { color:#334155; }
+.create-flow-step.done .num { background:#10B981; border-color:#10B981; color:#fff; }
+.create-flow-step.active { color:#0F172A; }
+.create-flow-step.active .num { background:#4F46E5; border-color:#4F46E5; color:#fff; box-shadow:0 6px 14px rgba(79,70,229,.18); }
+.create-flow-line { width:34px; height:1px; background:#E2E8F0; }
+.create-flow-line.done { background:#A7F3D0; }
 .dw-table-scroll { flex:1; min-height:0; min-width:0; overflow:auto; padding:20px; max-width:100%; }
 .dw-table-frame { background:#fff; border:1px solid #E2E8F0; border-radius:12px; box-shadow:0 1px 3px rgba(15,23,42,.04); min-height:100%; min-width:max-content; overflow:visible; }
 .dw-table { border-collapse:separate; border-spacing:0; font-size:13px; width:max-content; min-width:100%; }
@@ -119,13 +128,17 @@ body { background: #fff; color: #0F172A; }
 .dw-table td { border-right:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0; background:#fff; padding:0; min-width:150px; }
 .dw-row-index { position:sticky; left:0; z-index:5; min-width:58px !important; width:58px; background:#F8FAFC !important; color:#94A3B8; text-align:center; font-weight:800; border-right:1px solid #CBD5E1 !important; }
 .dw-table tbody .dw-row-index { z-index:3; font-size:11px; }
-.dw-action-col { position:sticky; right:0; z-index:5; min-width:52px !important; width:52px; background:#F8FAFC !important; text-align:center; border-left:1px solid #CBD5E1 !important; }
-.dw-table tbody .dw-action-col { z-index:3; background:#fff !important; }
-.dw-delete-btn { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; color:#94A3B8; transition:all .18s; }
-.dw-delete-btn:hover { background:#FEF2F2; color:#DC2626; }
+.dw-row-index-inner { position:relative; display:flex; align-items:center; justify-content:center; min-height:35px; padding:0 16px 0 8px; }
+.dw-row-delete { position:absolute; right:4px; top:50%; transform:translateY(-50%); width:16px; height:16px; border-radius:5px; display:flex; align-items:center; justify-content:center; color:#CBD5E1; opacity:.35; transition:all .16s; font-size:13px; line-height:1; }
+.dw-row-index:hover .dw-row-delete { opacity:1; color:#94A3B8; background:#F1F5F9; }
+.dw-row-delete:hover { color:#DC2626 !important; background:#FEF2F2 !important; }
 .dw-head-input,.dw-cell-input { width:100%; min-width:0; background:transparent; outline:none; border:0; }
 .dw-head-input { padding:10px 12px; color:#0F172A; font-weight:800; }
 .dw-cell-input { padding:9px 12px; color:#0F172A; font-weight:600; }
+.dw-col-badge { display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; border-radius:6px; background:#EEF2FF; color:#4F46E5; font-size:10px; font-weight:900; }
+.dw-table th.dw-col-x, .dw-table td.dw-col-x { background:#EFF6FF !important; }
+.dw-table th.dw-col-y, .dw-table td.dw-col-y { background:#F5F3FF !important; }
+.dw-table th.dw-col-xy, .dw-table td.dw-col-xy { background:#EEF2FF !important; box-shadow:inset 0 0 0 1px rgba(79,70,229,.18); }
 .dw-cell-number .dw-cell-input { color:#2563EB; }
 .dw-cell-date .dw-cell-input { color:#059669; }
 .dw-cell-text .dw-cell-input { color:#0F172A; }
@@ -557,21 +570,7 @@ body { background: #fff; color: #0F172A; }
     <!-- Tab: Gallery -->
     <div id="tab-gallery" class="dtab h-full flex flex-col hide overflow-y-auto pb-16">
       <div class="bg-white px-8 py-7 border-b border-border sticky top-0 z-10 shadow-sm">
-        <div id="gallery-flow-progress" class="hide mb-5 rounded-2xl border border-border bg-surface px-4 py-3">
-          <div class="flex flex-wrap items-center gap-2 text-xs font-extrabold text-muted">
-            <span class="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-[10px]">1</span>
-            <span class="text-dark">파일 업로드</span>
-            <div class="w-10 h-px bg-border"></div>
-            <span class="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-[10px]">2</span>
-            <span class="text-dark">데이터 확인</span>
-            <div class="w-10 h-px bg-border"></div>
-            <span class="w-6 h-6 rounded-full bg-accent text-white flex items-center justify-center text-[10px]">3</span>
-            <span class="text-dark">차트 선택</span>
-            <div class="w-10 h-px bg-border"></div>
-            <span class="w-6 h-6 rounded-full bg-border text-muted flex items-center justify-center text-[10px]">4</span>
-            <span>편집 & 공유</span>
-          </div>
-        </div>
+        <div id="gallery-flow-progress" class="hide mb-5 rounded-2xl border border-border bg-surface px-4 py-3"></div>
         <h1 class="text-2xl font-extrabold text-dark mb-2">차트 갤러리</h1>
         <p class="text-muted text-sm mb-6 font-medium">데이터 목적에 맞는 완벽한 차트 유형을 선택하세요.</p>
         <div class="flex gap-2 overflow-x-auto pb-1">
@@ -599,16 +598,7 @@ body { background: #fff; color: #0F172A; }
       </button>
       <span class="text-sm font-bold text-dark">새 시각화 만들기</span>
     </div>
-    <div class="flex items-center gap-2 text-xs font-bold text-muted">
-      <span class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px]">1</span>
-      <span class="text-dark">파일 선택</span>
-      <div class="w-8 h-px bg-border"></div>
-      <span class="w-5 h-5 rounded-full bg-border text-muted flex items-center justify-center text-[10px]">2</span>
-      <span>자동 차트 생성</span>
-      <div class="w-8 h-px bg-border"></div>
-      <span class="w-5 h-5 rounded-full bg-border text-muted flex items-center justify-center text-[10px]">3</span>
-      <span>편집 & 공유</span>
-    </div>
+    <div id="progress-new-viz" class="create-flow-progress"></div>
     <div class="w-20"></div>
   </div>
 
@@ -749,16 +739,7 @@ body { background: #fff; color: #0F172A; }
       </button>
       <span class="text-sm font-extrabold text-dark">데이터 확인 및 정리</span>
     </div>
-    <div class="flex items-center gap-2 text-xs font-bold text-muted">
-      <span class="w-5 h-5 rounded-full bg-green-500 text-white flex items-center justify-center text-[10px]">1</span>
-      <span>파일 업로드</span>
-      <div class="w-8 h-px bg-border"></div>
-      <span class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px]">2</span>
-      <span class="text-dark">데이터 확인</span>
-      <div class="w-8 h-px bg-border"></div>
-      <span class="w-5 h-5 rounded-full bg-border text-muted flex items-center justify-center text-[10px]">3</span>
-      <span>차트 선택</span>
-    </div>
+    <div id="progress-data-check" class="create-flow-progress"></div>
     <button onclick="goNextChartGallery()" class="dw-mini-btn primary">
       다음: 차트 선택
       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
@@ -839,46 +820,104 @@ body { background: #fff; color: #0F172A; }
       </button>
       <span class="text-sm font-extrabold text-dark">도움말</span>
     </div>
-    <button onclick="go('new-viz')" class="dw-mini-btn primary">새 시각화 만들기</button>
+    <button onclick="go('new-viz')" class="dw-mini-btn primary">새 시각화 만들기로 돌아가기</button>
   </div>
-  <div class="flex-1 min-h-0 flex">
-    <aside class="w-64 bg-white border-r border-border p-6 shrink-0">
-      <div class="text-[11px] font-black text-muted uppercase tracking-widest mb-4">Guide</div>
-      <button class="w-full text-left px-3 py-2 rounded-lg bg-accent text-white text-sm font-extrabold">첫 번째 차트 만들기</button>
-      <button onclick="go('new-viz')" class="w-full text-left px-3 py-2 rounded-lg text-muted hover:bg-surface hover:text-dark text-sm font-bold mt-1">파일 업로드로 돌아가기</button>
-    </aside>
-    <article class="flex-1 overflow-y-auto bg-white">
-      <div class="max-w-3xl mx-auto px-10 py-12">
-        <p class="text-xs font-black text-accent tracking-widest mb-3">BEGINNER TUTORIAL</p>
-        <h1 class="text-4xl font-black text-dark mb-5">첫 번째 차트 만들기</h1>
-        <p class="text-base text-muted leading-relaxed font-medium mb-10">
-          MAC은 CSV나 Excel 파일을 올린 뒤, 표를 확인하고, 차트 유형을 고르고, Chart Studio에서 다듬는 흐름으로 작동합니다.
-        </p>
-        <div class="space-y-8">
-          <section>
-            <h2 class="text-lg font-extrabold text-dark mb-2">1. 파일을 올립니다</h2>
-            <p class="text-sm text-muted leading-relaxed">`새 시각화 만들기`에서 `파일 업로드` 영역을 클릭하고 CSV 또는 Excel 파일을 선택하세요. 파일이 준비되면 `차트 자동 생성하기`를 누릅니다.</p>
-          </section>
-          <section>
-            <h2 class="text-lg font-extrabold text-dark mb-2">2. 데이터를 확인합니다</h2>
-            <p class="text-sm text-muted leading-relaxed">데이터 확인 화면에서 열 제목, 빈칸, 숫자와 날짜 형식을 살펴보세요. 필요하면 검색, 정렬, 행과 열 바꾸기, 열 추가로 표를 정리합니다.</p>
-          </section>
-          <section>
-            <h2 class="text-lg font-extrabold text-dark mb-2">3. 차트를 선택합니다</h2>
-            <p class="text-sm text-muted leading-relaxed">`다음: 차트 선택`을 누르면 차트 갤러리로 이동합니다. 막대, 선, 도넛, 워드 클라우드 등 목적에 맞는 차트를 고르세요.</p>
-          </section>
-          <section>
-            <h2 class="text-lg font-extrabold text-dark mb-2">4. Chart Studio에서 다듬습니다</h2>
-            <p class="text-sm text-muted leading-relaxed">제목, 색상, 정렬, 축 선택을 조정합니다. `원본 데이터` 탭에서 표를 다시 수정하면 차트에도 반영됩니다.</p>
-          </section>
-          <section>
-            <h2 class="text-lg font-extrabold text-dark mb-2">5. 대시보드에 추가하고 공유합니다</h2>
-            <p class="text-sm text-muted leading-relaxed">완성된 차트는 대시보드에 추가해 배치할 수 있습니다. 저장과 공유는 발표나 보고서에 바로 활용할 수 있도록 준비된 단계입니다.</p>
-          </section>
+  <article class="flex-1 overflow-y-auto bg-white">
+    <div class="max-w-4xl mx-auto px-6 md:px-10 py-12">
+      <div class="mb-12">
+        <p class="text-xs font-black text-accent tracking-widest mb-3">튜토리얼</p>
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-5">
+          <div>
+            <h1 class="text-4xl font-black text-dark mb-4">첫 번째 차트 만들기</h1>
+            <p class="text-lg text-slate-600 leading-relaxed font-medium max-w-3xl">
+              파일을 올리고, 데이터를 확인하고, 차트를 고른 뒤 Chart Studio에서 다듬는 전체 과정을 따라 해보세요.
+            </p>
+          </div>
+          <button onclick="go('new-viz')" class="dw-mini-btn primary shrink-0">새 시각화 만들기로 돌아가기</button>
         </div>
       </div>
-    </article>
-  </div>
+
+      <div class="space-y-12">
+        <section class="space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-black">1</span>
+            <h2 class="text-2xl font-black text-dark">MAC 시작 화면에서 새 시각화 만들기</h2>
+          </div>
+          <p class="text-[15px] text-slate-600 leading-relaxed">새 시각화 만들기 화면에서 직접 입력하거나 파일을 업로드할 수 있습니다. 처음 사용하는 경우 CSV 또는 Excel 파일을 올리는 방식이 가장 쉽습니다.</p>
+          <div class="rounded-2xl border border-border bg-surface h-40 flex items-center justify-center text-sm font-bold text-muted">스크린샷 예정: 새 시각화 만들기 화면</div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-black">2</span>
+            <h2 class="text-2xl font-black text-dark">CSV 또는 Excel 파일 업로드하기</h2>
+          </div>
+          <p class="text-[15px] text-slate-600 leading-relaxed">파일 업로드 영역을 클릭하거나 파일을 드래그해 업로드합니다. 파일이 준비되면 ‘차트 자동 생성하기’를 눌러 다음 단계로 이동합니다.</p>
+          <div class="rounded-2xl border border-border bg-surface h-40 flex items-center justify-center text-sm font-bold text-muted">스크린샷 예정: 파일 업로드 화면</div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-black">3</span>
+            <h2 class="text-2xl font-black text-dark">데이터 확인 및 정리하기</h2>
+          </div>
+          <p class="text-[15px] text-slate-600 leading-relaxed">업로드한 데이터가 표 형태로 표시됩니다. 열 제목, 빈칸, 숫자와 날짜 형식이 올바르게 인식되었는지 확인합니다.</p>
+          <div class="grid sm:grid-cols-2 gap-3 text-sm font-bold">
+            <div class="rounded-xl border border-blue-200 bg-blue-50 text-blue-700 px-4 py-3">파란 글자: 숫자 데이터</div>
+            <div class="rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 px-4 py-3">초록 글자: 날짜 데이터</div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 text-slate-800 px-4 py-3">검정 글자: 문자 데이터</div>
+            <div class="rounded-xl border border-red-200 bg-red-50 text-red-600 px-4 py-3">빨간 테두리: 비어 있거나 확인이 필요한 값</div>
+          </div>
+          <div class="rounded-2xl border border-border bg-surface h-40 flex items-center justify-center text-sm font-bold text-muted">스크린샷 예정: 데이터 확인 및 정리 화면</div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-black">4</span>
+            <h2 class="text-2xl font-black text-dark">표를 차트에 맞게 다듬기</h2>
+          </div>
+          <p class="text-[15px] text-slate-600 leading-relaxed">필요하면 행 추가, 열 추가, 행과 열 바꾸기, 정렬, 검색 기능을 사용해 차트에 맞게 표를 정리합니다. 차트가 이상하게 보일 때는 행과 열을 바꾸면 더 자연스럽게 보일 수 있습니다.</p>
+          <div class="rounded-2xl border border-border bg-surface h-40 flex items-center justify-center text-sm font-bold text-muted">스크린샷 예정: 행과 열 바꾸기 기능</div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-black">5</span>
+            <h2 class="text-2xl font-black text-dark">차트 갤러리에서 차트 선택하기</h2>
+          </div>
+          <p class="text-[15px] text-slate-600 leading-relaxed">데이터 확인이 끝나면 차트 갤러리에서 원하는 차트 유형을 선택합니다. 막대 차트는 항목 비교에 좋고, 선 차트는 시간 흐름을 보여줄 때 좋습니다. 도넛/파이 차트는 전체 중 비중을 보여줄 때 적합합니다.</p>
+          <div class="rounded-2xl border border-border bg-surface h-40 flex items-center justify-center text-sm font-bold text-muted">스크린샷 예정: 차트 갤러리 화면</div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-black">6</span>
+            <h2 class="text-2xl font-black text-dark">Chart Studio에서 차트 편집하기</h2>
+          </div>
+          <p class="text-[15px] text-slate-600 leading-relaxed">Chart Studio에서는 제목, 색상, 라벨, 정렬, 축 설정을 조정할 수 있습니다. 오른쪽 패널에서 차트 스타일을 바꾸면 중앙 미리보기 차트에 바로 반영됩니다.</p>
+          <div class="rounded-2xl border border-border bg-surface h-40 flex items-center justify-center text-sm font-bold text-muted">스크린샷 예정: Chart Studio 편집 화면</div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-black">7</span>
+            <h2 class="text-2xl font-black text-dark">원본 데이터에서 X축과 Y축 조정하기</h2>
+          </div>
+          <p class="text-[15px] text-slate-600 leading-relaxed">원본 데이터 탭에서는 어떤 열을 X축과 Y축으로 사용할지 선택할 수 있습니다. X축은 기준이 되는 항목이고, Y축은 차트로 그릴 숫자 값입니다. 선택한 열은 표에서 색으로 강조되어 차트에 어떤 데이터가 들어가는지 쉽게 확인할 수 있습니다.</p>
+          <div class="rounded-2xl border border-border bg-surface h-40 flex items-center justify-center text-sm font-bold text-muted">스크린샷 예정: 원본 데이터 X축/Y축 설정 화면</div>
+        </section>
+
+        <section class="space-y-4 pb-8">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-black">8</span>
+            <h2 class="text-2xl font-black text-dark">대시보드에 추가하고 저장하기</h2>
+          </div>
+          <p class="text-[15px] text-slate-600 leading-relaxed">완성된 차트는 대시보드에 추가해 배치할 수 있습니다. 발표나 보고서에 활용할 수 있도록 저장하고 공유하는 흐름까지 이어집니다.</p>
+          <div class="rounded-2xl border border-border bg-surface h-40 flex items-center justify-center text-sm font-bold text-muted">스크린샷 예정: 대시보드 추가 화면</div>
+        </section>
+      </div>
+    </div>
+  </article>
 </section>
 
 <!-- ━━━━━━━━━━ 5. ACADEMY INFO ━━━━━━━━━━ -->
@@ -1176,6 +1215,7 @@ body { background: #fff; color: #0F172A; }
       </button>
       <span class="text-sm font-extrabold text-dark">새 시각화 만들기</span>
     </div>
+    <div id="progress-data-editor" class="create-flow-progress"></div>
     <button class="bg-accent text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-indigo-700 transition-colors">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
       내 프로젝트 저장하기
@@ -1217,35 +1257,16 @@ body { background: #fff; color: #0F172A; }
 
     <!-- GENERAL TOOLBAR -->
     <div id="gen-toolbar" class="px-6 py-3 bg-white border-b border-border flex flex-wrap items-center gap-3 hide">
-      <button onclick="addGeneralRow()" class="dw-mini-btn primary">
+      <button onclick="addGeneralRow('editor')" class="dw-mini-btn add">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
         행 추가
       </button>
-      <button onclick="addGeneralColumn()" class="dw-mini-btn">
+      <button onclick="addGeneralColumn('editor')" class="dw-mini-btn add">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
         열 추가
       </button>
-      
-      <div id="gen-axis-normal" class="ml-auto flex flex-wrap items-center gap-3 bg-surface px-4 py-2 rounded-xl border border-border">
-        <div class="flex items-center gap-2">
-          <div class="flex flex-col leading-tight">
-            <span class="text-xs font-bold text-muted">X축 (기준 라벨)</span>
-            <span class="text-[10px] text-slate-400 font-semibold">예: 연월, 지역, 항목명</span>
-          </div>
-          <select id="gen-x-axis" class="prop-inp py-1 w-32" title="예: 연월, 지역, 항목명" onchange="syncGeneralDataToChart()"></select>
-        </div>
-        <div class="w-px h-4 bg-border"></div>
-        <div class="flex items-center gap-2">
-          <div class="flex flex-col leading-tight">
-            <span class="text-xs font-bold text-muted">Y축 (시각화 값)</span>
-            <span class="text-[10px] text-slate-400 font-semibold">예: 매출액, 인원수, 점수</span>
-          </div>
-          <select id="gen-y-axis" class="prop-inp py-1 w-32" title="예: 매출액, 인원수, 점수" onchange="syncGeneralDataToChart()"></select>
-        </div>
-        <div class="basis-full text-[11px] font-semibold text-accent bg-indigo-50 border border-accent/15 rounded-lg px-3 py-1.5">
-          도움말: X축은 가로 기준이 되는 항목입니다. Y축은 차트로 그릴 숫자 값입니다.
-        </div>
-      </div>
+      <button onclick="transposeGeneralData('editor')" class="dw-mini-btn neutral">행과 열 바꾸기</button>
+      <button onclick="undoGeneralData()" class="dw-mini-btn warn">변경 되돌리기</button>
 
       <!-- 워드 클라우드 전용: 3축 선택기 -->
       <div id="gen-axis-word" class="hide ml-auto flex items-center gap-3 bg-indigo-50 border border-accent/20 px-4 py-1.5 rounded-xl">
@@ -1267,7 +1288,7 @@ body { background: #fff; color: #0F172A; }
         </div>
       </div>
       
-      <div id="gen-chart-actions" class="flex items-center gap-2 ml-2"></div>
+      <div id="gen-chart-actions" class="flex items-center gap-2 ml-auto"></div>
     </div>
 
     <div id="acad-tabs" class="px-6 pt-3 bg-white flex gap-2">
@@ -1275,7 +1296,7 @@ body { background: #fff; color: #0F172A; }
       <button id="ds-inquiry" onclick="switchDataset('inquiry')" class="px-4 py-2 text-xs font-bold border border-border text-muted rounded-lg hover:bg-surface transition-all">신규문의 데이터셋</button>
     </div>
     
-    <div class="flex-1 overflow-auto px-6 py-4">
+    <div class="flex-1 min-h-0 overflow-auto px-6 py-4">
       <!-- CUSTOM START SCREEN: shown when coming from gallery with no data -->
       <div id="gen-start-screen" class="hide h-full flex items-center justify-center py-4">
         <div class="w-full max-w-lg">
@@ -1316,15 +1337,47 @@ body { background: #fff; color: #0F172A; }
         </div>
       </div>
       <!-- GENERAL DATASET VIEW -->
-      <div id="view-general" class="hide h-full flex flex-col">
-        <div class="dw-table-scroll !p-0">
-          <div class="dw-table-frame">
-          <table class="dw-table text-left">
-            <thead id="gen-thead"></thead>
-            <tbody id="gen-tbody"></tbody>
-          </table>
+      <div id="view-general" class="hide h-full min-h-0 flex gap-4">
+        <div class="flex-1 min-w-0 flex flex-col">
+          <div class="dw-table-scroll">
+            <div class="dw-table-frame">
+              <table class="dw-table text-left">
+                <thead id="gen-thead"></thead>
+                <tbody id="gen-tbody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
+        <aside id="gen-mapping-panel" class="w-[300px] shrink-0 bg-white border border-border rounded-2xl p-4 overflow-y-auto">
+          <h3 class="text-sm font-black text-dark mb-2">차트에 들어갈 열을 확인하세요</h3>
+          <p class="text-xs text-muted leading-relaxed font-semibold mb-4">X축은 기준이 되는 항목이고, Y축은 차트로 그릴 숫자 값입니다. 선택한 열은 표에서 색으로 표시됩니다.</p>
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">X축 선택 열</span>
+            <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-100">Y축 선택 열</span>
+          </div>
+          <div id="gen-axis-normal" class="space-y-4">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-black text-muted">X축 (기준 라벨)</label>
+                <span id="gen-x-badge" class="dw-col-badge">A</span>
+              </div>
+              <select id="gen-x-axis" class="prop-inp py-2" title="예: 연월, 지역, 항목명" onchange="handleAxisChange()"></select>
+              <p class="text-[11px] text-slate-400 font-semibold mt-1.5">예: 연월, 지역, 항목명</p>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-black text-muted">Y축 (시각화 값)</label>
+                <span id="gen-y-badge" class="dw-col-badge">B</span>
+              </div>
+              <select id="gen-y-axis" class="prop-inp py-2" title="예: 매출액, 인원수, 점수" onchange="handleAxisChange()"></select>
+              <p class="text-[11px] text-slate-400 font-semibold mt-1.5">예: 매출액, 인원수, 점수</p>
+            </div>
+          </div>
+          <div class="mt-5 rounded-2xl border border-border bg-surface p-3">
+            <div class="text-xs font-black text-dark mb-2">실시간 미리보기</div>
+            <canvas id="gen-mini-preview" class="w-full h-[150px] bg-white rounded-xl border border-border"></canvas>
+          </div>
+        </aside>
       </div>
 
       <!-- ACADEMY DATASET VIEWS -->
@@ -3084,15 +3137,10 @@ function drawChart(type, color, canvasEl) {
     for(let i=0;i<=5;i++){ label(Math.round(max/5*i), pad.l-10, pad.t+cH-cH/5*i+4, 'right'); }
   }
   else if (type === 'racing') {
-    const brands = ['A 학원', 'B 학원', 'C 학원', 'D 학원', 'E 학원'];
-    const rColors = [pColor(0),pColor(1),pColor(2),pColor(3),pColor(4)];
-    const racingData = [
-      { year: 2021, values: [30, 50, 20, 80, 40] },
-      { year: 2022, values: [45, 40, 50, 70, 60] },
-      { year: 2023, values: [60, 55, 90, 65, 70] },
-      { year: 2024, values: [80, 75, 85, 55, 60] },
-      { year: 2025, values: [110, 90, 85, 50, 40] }
-    ];
+    const racingSource = buildRacingDataset(cData);
+    const brands = racingSource.brands;
+    const rColors = brands.map((_, i) => pColor(i));
+    const racingData = racingSource.frames;
 
     const gap = cH / brands.length;
     const barH = gap * (1 - (chartProps.barGap / 100));
@@ -3389,11 +3437,12 @@ function drawChart(type, color, canvasEl) {
   else if (type === 'donut' || type === 'pie') {
     const cx=W/2, cy=H/2, outerR=Math.min(cW,cH)*0.42;
     const innerR = type==='donut' ? outerR*0.52 : 0;
-    const colors = [pColor(0),pColor(1),pColor(2),pColor(3),pColor(4)];
-    const sliceData = [38,27,18,12,5];
-    const total = sliceData.reduce((a,b)=>a+b,0);
+    const pieItems = buildPieDonutDataset(cData).slice(0, 8);
+    const colors = pieItems.map((_, i) => pColor(i));
+    const sliceData = pieItems.map(item => item.value);
+    const total = sliceData.reduce((a,b)=>a+b,0) || 1;
     let angle = -Math.PI/2;
-    const labels2 = ['수학','영어','과학','사회','기타'];
+    const labels2 = pieItems.map(item => item.label);
     
     sliceData.forEach((v,i)=>{
       const sweep = (v/total)*Math.PI*2;
@@ -3407,23 +3456,23 @@ function drawChart(type, color, canvasEl) {
         ctx.fill();
       }
       
-      canvas._hitboxes.push({ type: 'arc', cx, cy, innerR, outerR, startAngle: angle, endAngle: angle+sweep, label: labels2[i], value: v+'%' });
+      canvas._hitboxes.push({ type: 'arc', cx, cy, innerR, outerR, startAngle: angle, endAngle: angle+sweep, label: labels2[i], value: fmt(v) });
       
       const midA = angle + sweep/2;
       const lr = outerR * 0.72 + (innerR > 0 ? innerR*0.3 : 0);
       const lx = cx + Math.cos(midA)*lr;
       const ly = cy + Math.sin(midA)*lr;
-      label(v+'%', lx, ly+4, 'center', chartProps.labelSize, '#fff');
+      label(Math.round((v/total)*100)+'%', lx, ly+4, 'center', chartProps.labelSize, '#fff');
       angle += sweep;
     });
     
     if(type==='donut'){
       label('합계', cx, cy-6, 'center', chartProps.labelSize, mutedColor);
-      label(total, cx, cy+16, 'center', chartProps.labelSize+4, textColor, true);
+      label(fmt(total), cx, cy+16, 'center', chartProps.labelSize+4, textColor, true);
     }
     sliceData.forEach((v,i)=>{
       const lx = W-120, ly = 60+i*28;
-      drawLegendDynamic(labels2[i]+' '+v+'%', colors[i%colors.length]);
+      drawLegendDynamic(labels2[i]+' '+Math.round((v/total)*100)+'%', colors[i%colors.length]);
     });
   }
   else if (type === 'word') {
@@ -3598,11 +3647,40 @@ function renderGalleryFlowProgress() {
   const el = document.getElementById('gallery-flow-progress');
   if (!el) return;
   el.classList.toggle('hide', !window.isInCreateFlow);
+  if (window.isInCreateFlow) el.innerHTML = createFlowProgressHtml(3);
+}
+
+function createFlowProgressHtml(activeStep) {
+  const steps = [
+    '파일 업로드',
+    '데이터 확인',
+    '차트 선택',
+    '편집 & 공유'
+  ];
+  return `<div class="create-flow-progress">` + steps.map((label, i) => {
+    const step = i + 1;
+    const state = step < activeStep ? 'done' : (step === activeStep ? 'active' : '');
+    const line = i < steps.length - 1 ? `<div class="create-flow-line ${step < activeStep ? 'done' : ''}"></div>` : '';
+    return `<div class="create-flow-step ${state}"><span class="num">${step}</span><span>${label}</span></div>${line}`;
+  }).join('') + `</div>`;
+}
+
+function renderCreateFlowProgressIndicators() {
+  const map = {
+    'progress-new-viz': 1,
+    'progress-data-check': 2,
+    'progress-data-editor': 4
+  };
+  Object.entries(map).forEach(([id, step]) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = createFlowProgressHtml(step);
+  });
 }
 
 // ─── Tooltip & UI Interactivity ───
 document.addEventListener('DOMContentLoaded', () => {
   loadWorkspace();   // localStorage 복원
+  renderCreateFlowProgressIndicators();
   go('landing');
   document.querySelectorAll('.bar-anim').forEach(b=>{ b.style.opacity='1'; });
   renderCategoryGrid('new-viz-grid', true);
@@ -4033,6 +4111,34 @@ function cellClassFor(value) {
   return `dw-cell-${type}`;
 }
 
+function columnBadge(idx) {
+  let n = idx;
+  let label = '';
+  do {
+    label = String.fromCharCode(65 + (n % 26)) + label;
+    n = Math.floor(n / 26) - 1;
+  } while (n >= 0);
+  return label;
+}
+
+function getSelectedAxisIndices() {
+  const xIdx = parseInt(document.getElementById('gen-x-axis')?.value ?? 0, 10);
+  const yIdx = parseInt(document.getElementById('gen-y-axis')?.value ?? (genHeaders.length > 1 ? 1 : 0), 10);
+  return {
+    xIdx: Number.isFinite(xIdx) ? xIdx : 0,
+    yIdx: Number.isFinite(yIdx) ? yIdx : (genHeaders.length > 1 ? 1 : 0)
+  };
+}
+
+function axisHighlightClass(cIdx, context) {
+  if (context !== 'editor' || selectedCategory !== 'custom') return '';
+  const { xIdx, yIdx } = getSelectedAxisIndices();
+  if (cIdx === xIdx && cIdx === yIdx) return 'dw-col-xy';
+  if (cIdx === xIdx) return 'dw-col-x';
+  if (cIdx === yIdx) return 'dw-col-y';
+  return '';
+}
+
 function rowMatchesSearch(row, query) {
   if (!query) return true;
   const q = query.toLowerCase();
@@ -4049,14 +4155,15 @@ function renderSpreadsheetTable(theadId, tbodyId, options={}) {
   const query = options.searchId ? (document.getElementById(options.searchId)?.value || '').trim() : '';
   let headHtml = '<tr><th class="dw-row-index">#</th>';
   genHeaders.forEach((header, cIdx) => {
-    headHtml += `<th class="min-w-[150px]">
+    headHtml += `<th class="min-w-[150px] ${axisHighlightClass(cIdx, context)}">
       <div class="flex items-center gap-1 group">
+        <span class="dw-col-badge ml-2">${columnBadge(cIdx)}</span>
         <input class="dw-head-input" value="${escHtml(header)}" onchange="updateGeneralHeader(${cIdx}, this.value, '${context}')">
         ${genHeaders.length > 1 ? `<button onclick="removeGeneralColumn(${cIdx}, '${context}')" class="opacity-30 group-hover:opacity-100 text-slate-300 hover:text-red-400 px-2 transition-opacity" title="열 삭제">×</button>` : ''}
       </div>
     </th>`;
   });
-  headHtml += '<th class="dw-action-col" title="행 삭제">삭제</th></tr>';
+  headHtml += '</tr>';
   thead.innerHTML = headHtml;
 
   let visibleRows = 0;
@@ -4064,24 +4171,26 @@ function renderSpreadsheetTable(theadId, tbodyId, options={}) {
   genRows.forEach((row, rIdx) => {
     if (!rowMatchesSearch(row, query)) return;
     visibleRows++;
-    bodyHtml += `<tr><td class="dw-row-index">${rIdx + 1}</td>`;
+    bodyHtml += `<tr><td class="dw-row-index">
+      <div class="dw-row-index-inner">
+        <span>${rIdx + 1}</span>
+        <button onclick="removeGeneralRow(${rIdx}, '${context}')" class="dw-row-delete" title="행 삭제" aria-label="행 삭제">×</button>
+      </div>
+    </td>`;
     genHeaders.forEach((_, cIdx) => {
       const cell = String(row?.[cIdx] ?? '');
-      bodyHtml += `<td class="${cellClassFor(cell)}">
+      bodyHtml += `<td class="${cellClassFor(cell)} ${axisHighlightClass(cIdx, context)}">
         <input class="dw-cell-input" value="${escHtml(cell)}" onchange="updateGeneralCell(${rIdx}, ${cIdx}, this.value, '${context}')">
       </td>`;
     });
-    bodyHtml += `<td class="dw-action-col">
-      <button onclick="removeGeneralRow(${rIdx}, '${context}')" class="dw-delete-btn" title="행 삭제">
-        <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-    </td></tr>`;
+    bodyHtml += '</tr>';
   });
   if (visibleRows === 0) {
-    bodyHtml = `<tr><td colspan="${genHeaders.length + 2}" class="text-center text-muted text-sm py-10">검색 결과가 없습니다</td></tr>`;
+    bodyHtml = `<tr><td colspan="${genHeaders.length + 1}" class="text-center text-muted text-sm py-10">검색 결과가 없습니다</td></tr>`;
   }
   tbody.innerHTML = bodyHtml;
   updateDataCount();
+  updateAxisBadges();
 }
 
 function populateDataCheckSort() {
@@ -4114,6 +4223,70 @@ function renderDataCheckTable() {
 function renderGeneralTable() {
   renderSpreadsheetTable('gen-thead', 'gen-tbody', { context:'editor' });
   renderRawDataActions();
+  drawMiniPreview();
+}
+
+function updateAxisBadges() {
+  const { xIdx, yIdx } = getSelectedAxisIndices();
+  const xb = document.getElementById('gen-x-badge');
+  const yb = document.getElementById('gen-y-badge');
+  if (xb) xb.textContent = `${columnBadge(xIdx)} · ${genHeaders[xIdx] || '열'}`;
+  if (yb) yb.textContent = `${columnBadge(yIdx)} · ${genHeaders[yIdx] || '열'}`;
+}
+
+function handleAxisChange() {
+  syncGeneralDataToChart();
+  renderGeneralTable();
+  drawMiniPreview();
+}
+
+function drawMiniPreview() {
+  const canvas = document.getElementById('gen-mini-preview');
+  if (!canvas || selectedCategory !== 'custom') return;
+  const rect = canvas.getBoundingClientRect();
+  const cssW = Math.max(220, Math.floor(rect.width || 260));
+  const cssH = Math.max(130, Math.floor(rect.height || 150));
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.floor(cssW * dpr);
+  canvas.height = Math.floor(cssH * dpr);
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,cssW,cssH);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0,0,cssW,cssH);
+  const dataset = getCurrentChartDataset();
+  if (!dataset.usable) {
+    ctx.fillStyle = '#94A3B8';
+    ctx.font = '700 12px Plus Jakarta Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('미리볼 숫자 데이터가 없습니다', cssW/2, cssH/2);
+    return;
+  }
+  const labels = dataset.labels.slice(0, 8);
+  const values = dataset.values.slice(0, 8);
+  const maxVal = Math.max(...values, 1);
+  const pad = { l:24, r:12, t:16, b:28 };
+  const chartW = cssW - pad.l - pad.r;
+  const chartH = cssH - pad.t - pad.b;
+  ctx.strokeStyle = '#E2E8F0';
+  ctx.lineWidth = 1;
+  for (let i=0; i<=3; i++) {
+    const y = pad.t + chartH - chartH * (i/3);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + chartW, y); ctx.stroke();
+  }
+  const gap = chartW / Math.max(values.length, 1);
+  values.forEach((v, i) => {
+    const h = (v / maxVal) * chartH;
+    const bw = Math.max(8, gap * .58);
+    const x = pad.l + gap * i + (gap - bw) / 2;
+    const y = pad.t + chartH - h;
+    ctx.fillStyle = '#4F46E5';
+    roundRect(ctx, x, y, bw, h, 4);
+    ctx.fillStyle = '#64748B';
+    ctx.font = '700 9px Plus Jakarta Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(labels[i] || '').slice(0, 5), x + bw/2, cssH - 10);
+  });
 }
 
 function renderRawDataActions() {
@@ -4148,14 +4321,14 @@ function applyGeneralDataToChart() {
 }
 
 function addGeneralRow(context='editor') {
-  if (context === 'data-check') pushDataUndo();
+  if (context === 'data-check' || context === 'editor') pushDataUndo();
   genRows.push(new Array(genHeaders.length).fill(''));
   if (context === 'data-check') setCurrentAsOriginalMatrix();
   refreshGeneralDataViews();
 }
 
 function addGeneralColumn(context='editor') {
-  if (context === 'data-check') pushDataUndo();
+  if (context === 'data-check' || context === 'editor') pushDataUndo();
   genHeaders.push(`데이터 ${genHeaders.length + 1}`);
   dataGeneratedHeaders.push(true);
   genRows.forEach(r => r.push(''));
@@ -4172,7 +4345,7 @@ function dataCheckAddColumn() {
 }
 
 function removeGeneralRow(idx, context='editor') {
-  if (context === 'data-check') pushDataUndo();
+  if (context === 'data-check' || context === 'editor') pushDataUndo();
   genRows.splice(idx, 1);
   if (genRows.length === 0) genRows.push(new Array(genHeaders.length).fill(''));
   if (context === 'data-check') setCurrentAsOriginalMatrix();
@@ -4181,7 +4354,7 @@ function removeGeneralRow(idx, context='editor') {
 
 function removeGeneralColumn(idx, context='editor') {
   if(genHeaders.length <= 1) return;
-  if (context === 'data-check') pushDataUndo();
+  if (context === 'data-check' || context === 'editor') pushDataUndo();
   genHeaders.splice(idx, 1);
   dataGeneratedHeaders.splice(idx, 1);
   genRows.forEach(r => r.splice(idx, 1));
@@ -4190,7 +4363,7 @@ function removeGeneralColumn(idx, context='editor') {
 }
 
 function updateGeneralHeader(idx, value, context='editor') {
-  if (context === 'data-check') pushDataUndo();
+  if (context === 'data-check' || context === 'editor') pushDataUndo();
   const trimmed = String(value ?? '').trim();
   genHeaders[idx] = trimmed || `컬럼 ${idx + 1}`;
   dataGeneratedHeaders[idx] = !trimmed;
@@ -4199,7 +4372,7 @@ function updateGeneralHeader(idx, value, context='editor') {
 }
 
 function updateGeneralCell(rIdx, cIdx, value, context='editor') {
-  if (context === 'data-check') pushDataUndo();
+  if (context === 'data-check' || context === 'editor') pushDataUndo();
   if (!genRows[rIdx]) genRows[rIdx] = new Array(genHeaders.length).fill('');
   genRows[rIdx][cIdx] = value;
   if (context === 'data-check') setCurrentAsOriginalMatrix();
@@ -4233,7 +4406,7 @@ function sortDataCheckRows(value) {
   refreshGeneralDataViews();
 }
 
-function transposeDataCheck() {
+function transposeGeneralData(context='data-check') {
   const matrix = currentDataMatrix();
   const height = matrix.length;
   const width = Math.max(1, ...matrix.map(row => row.length));
@@ -4246,6 +4419,14 @@ function transposeDataCheck() {
   dataOriginalMatrix = cloneMatrix(transposed);
   applyMatrixToGeneral(transposed, dataFirstRowAsHeader);
   refreshGeneralDataViews();
+}
+
+function transposeDataCheck() {
+  transposeGeneralData('data-check');
+}
+
+function undoGeneralData() {
+  undoDataCheck();
 }
 
 function undoDataCheck() {
@@ -4305,16 +4486,100 @@ function updateGenAxisSelects() {
   }
 
   syncGeneralDataToChart();
+  updateAxisBadges();
+}
+
+function parseChartNumber(val) {
+  if (val === null || val === undefined) return 0;
+  const parsed = parseFloat(String(val).replace(/,/g, '').trim());
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function getNumericColumns() {
+  return genHeaders
+    .map((h, idx) => ({
+      idx,
+      header: h,
+      count: genRows.filter(r => Number.isFinite(parseFloat(String(r?.[idx] ?? '').replace(/,/g, '').trim()))).length
+    }))
+    .filter(col => col.count > 0)
+    .sort((a, b) => b.count - a.count);
+}
+
+function getCurrentChartDataset() {
+  const hasCustomRows = selectedCategory === 'custom' && Array.isArray(genRows) && genRows.some(row => row.some(cell => String(cell ?? '').trim() !== ''));
+  if (hasCustomRows) {
+    const { xIdx } = getSelectedAxisIndices();
+    const numericCols = getNumericColumns();
+    const selectedY = parseInt(document.getElementById('gen-y-axis')?.value ?? -1, 10);
+    const yIdx = numericCols.some(c => c.idx === selectedY) ? selectedY : (numericCols[0]?.idx ?? selectedY);
+    const labels = genRows.map((r, i) => String(r?.[xIdx] ?? '').trim() || `행 ${i + 1}`);
+    const values = genRows.map(r => parseChartNumber(r?.[yIdx]));
+    const usable = labels.length > 0 && values.some(v => v > 0 || v < 0);
+    return {
+      labels,
+      values,
+      values2: SAMPLE_DATA.values2 || [],
+      values3: SAMPLE_DATA.values3 || [],
+      xIdx,
+      yIdx,
+      usable
+    };
+  }
+  return {
+    labels: SAMPLE_DATA.labels || [],
+    values: SAMPLE_DATA.values || [],
+    values2: SAMPLE_DATA.values2 || [],
+    values3: SAMPLE_DATA.values3 || [],
+    xIdx: 0,
+    yIdx: 1,
+    usable: (SAMPLE_DATA.values || []).some(v => v > 0 || v < 0)
+  };
+}
+
+function buildPieDonutDataset(cData) {
+  const source = getCurrentChartDataset();
+  const labels = (source.usable ? source.labels : cData.labels).slice();
+  const values = (source.usable ? source.values : cData.values).map(v => Math.max(0, parseChartNumber(v)));
+  const pairs = labels.map((label, i) => ({ label: String(label || `항목 ${i + 1}`), value: values[i] || 0 }))
+    .filter(item => item.value > 0);
+  return pairs.length ? pairs : [
+    { label:'항목 1', value:38 },
+    { label:'항목 2', value:27 },
+    { label:'항목 3', value:18 },
+    { label:'항목 4', value:12 },
+    { label:'항목 5', value:5 }
+  ];
+}
+
+function buildRacingDataset(cData) {
+  const source = getCurrentChartDataset();
+  const labels = (source.usable ? source.labels : cData.labels).map((l, i) => String(l || `항목 ${i + 1}`)).slice(0, 10);
+  const values = (source.usable ? source.values : cData.values).map(v => Math.max(0, parseChartNumber(v))).slice(0, labels.length);
+  if (!labels.length || !values.some(v => v > 0)) {
+    return {
+      brands: ['항목 A', '항목 B', '항목 C', '항목 D', '항목 E'],
+      frames: [
+        { year: 2024, values: [30, 50, 20, 80, 40] },
+        { year: 2025, values: [80, 75, 85, 55, 60] }
+      ]
+    };
+  }
+  const previous = (cData.values2 || []).slice(0, labels.length).map((v, i) => {
+    const parsed = parseChartNumber(v);
+    return parsed > 0 ? parsed : Math.max(1, values[i] * 0.55);
+  });
+  return {
+    brands: labels,
+    frames: [
+      { year: 2024, values: previous },
+      { year: 2025, values }
+    ]
+  };
 }
 
 function syncGeneralDataToChart() {
   if (selectedCategory !== 'custom') return;
-
-  const parseNum = (val) => {
-    if(!val) return 0;
-    const parsed = parseFloat(val.toString().replace(/,/g, '').trim());
-    return isNaN(parsed) ? 0 : parsed;
-  };
 
   // ── 워드 클라우드: 3축(단어, 빈도수, 카테고리) ──────────────────────
   if (studioCurrentType === 'word') {
@@ -4323,7 +4588,7 @@ function syncGeneralDataToChart() {
     const catIdx  = parseInt(document.getElementById('gen-cat-axis')?.value ?? -1);
 
     SAMPLE_DATA.labels     = genRows.map(r => r[wordIdx] || '');
-    SAMPLE_DATA.values     = genRows.map(r => parseNum(r[freqIdx]));
+    SAMPLE_DATA.values     = genRows.map(r => parseChartNumber(r[freqIdx]));
     SAMPLE_DATA.categories = catIdx >= 0
       ? genRows.map(r => (r[catIdx] || '').trim())
       : [];
@@ -4337,17 +4602,18 @@ function syncGeneralDataToChart() {
     if (isNaN(xIdx) || isNaN(yIdx)) return;
 
     SAMPLE_DATA.labels = genRows.map(r => r[xIdx] || '');
-    SAMPLE_DATA.values = genRows.map(r => parseNum(r[yIdx]));
+    SAMPLE_DATA.values = genRows.map(r => parseChartNumber(r[yIdx]));
     SAMPLE_DATA.categories = [];
 
     let remainingCols = [];
     for(let i=0; i<genHeaders.length; i++) {
       if(i !== xIdx && i !== yIdx) remainingCols.push(i);
     }
-    SAMPLE_DATA.values2 = remainingCols.length > 0 ? genRows.map(r => parseNum(r[remainingCols[0]])) : [];
-    SAMPLE_DATA.values3 = remainingCols.length > 1 ? genRows.map(r => parseNum(r[remainingCols[1]])) : [];
-    SAMPLE_DATA.values4 = remainingCols.length > 2 ? genRows.map(r => parseNum(r[remainingCols[2]])) : [];
+    SAMPLE_DATA.values2 = remainingCols.length > 0 ? genRows.map(r => parseChartNumber(r[remainingCols[0]])) : [];
+    SAMPLE_DATA.values3 = remainingCols.length > 1 ? genRows.map(r => parseChartNumber(r[remainingCols[1]])) : [];
+    SAMPLE_DATA.values4 = remainingCols.length > 2 ? genRows.map(r => parseChartNumber(r[remainingCols[2]])) : [];
   }
+  drawMiniPreview();
 
   if (studioCurrentType && document.getElementById('editor-studio').classList.contains('hide') === false) {
     drawStudioChart(studioCurrentType, studioCurrentColor);
@@ -4381,6 +4647,7 @@ function go(pageId, tabId=null) {
   if (pageId === 'data-editor') {
     consumePendingData();
   }
+  renderCreateFlowProgressIndicators();
 
   document.querySelectorAll('.page').forEach(p=>p.classList.add('hide'));
   const pg = document.getElementById('page-'+pageId);
@@ -4414,6 +4681,7 @@ function go(pageId, tabId=null) {
       renderGeneralTable();
       updateGenAxisSelects();
       syncGeneralDataToChart();
+      drawMiniPreview();
     } else {
       document.getElementById('gen-toolbar').classList.add('hide');
       document.getElementById('view-general').classList.add('hide');
@@ -4467,6 +4735,7 @@ function switchEditorTab(tab, btn) {
     requestAnimationFrame(() => dashboardCharts.forEach(c => dbRedrawWidget(c.id)));
   } else if (tab === 'raw') {
     renderRawDataActions();
+    drawMiniPreview();
   }
 }
 
