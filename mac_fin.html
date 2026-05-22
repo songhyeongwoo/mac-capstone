@@ -162,8 +162,11 @@ body { background: #fff; color: #0F172A; }
 .dw-legend-empty { color:#DC2626; background:#FEF2F2; border-color:#FCA5A5; }
 .raw-editor-body { flex:1; min-height:0; min-width:0; overflow:hidden; padding:16px 24px; background:#F8FAFC; display:flex; flex-direction:column; }
 .data-check-table-body { flex:1; min-height:0; min-width:0; overflow:hidden; padding:16px 24px 18px 16px; background:#F8FAFC; display:flex; flex-direction:column; }
-.mini-preview-card { position:relative; z-index:1; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; transform-origin:bottom right; }
-.mini-preview-card:hover { transform:scale(1.32); z-index:40; border-color:#C7D2FE; box-shadow:0 18px 40px rgba(15,23,42,.16); }
+.mini-preview-card { position:relative; z-index:1; transition:box-shadow .18s ease, border-color .18s ease, background .18s ease; cursor:zoom-in; }
+.mini-preview-card:hover { border-color:#C7D2FE; background:#fff; box-shadow:0 10px 28px rgba(15,23,42,.10); }
+#mini-preview-float { position:fixed; right:32px; bottom:36px; width:640px; height:420px; max-width:calc(100vw - 80px); max-height:calc(100vh - 140px); z-index:99999; background:rgba(255,255,255,.98); border:1px solid #C7D2FE; border-radius:18px; box-shadow:0 24px 70px rgba(15,23,42,.24); opacity:0; pointer-events:none; transform:translateY(10px) scale(.98); transition:opacity .16s ease, transform .16s ease; overflow:hidden; backdrop-filter:blur(10px); }
+#mini-preview-float.show { opacity:1; pointer-events:auto; transform:translateY(0) scale(1); }
+#mini-preview-float canvas { width:100%; height:100%; display:block; }
 .project-title-input { width:100%; border:0; outline:0; background:transparent; color:#0F172A; font-size:15px; font-weight:900; padding:0; }
 .project-title-input:focus { color:#4F46E5; }
 .project-card-thumb { aspect-ratio:16/10; background:#F8FAFC; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
@@ -1385,7 +1388,8 @@ body { background: #fff; color: #0F172A; }
               <p class="text-[11px] text-slate-400 font-semibold mt-1.5">예: 매출액, 인원수, 점수</p>
             </div>
           </div>
-          <div class="mini-preview-card mt-auto rounded-2xl border border-border bg-surface p-3">
+          <div class="mini-preview-card mt-auto rounded-2xl border border-border bg-surface p-3"
+            onmouseenter="showMiniPreviewFloat()" onmouseleave="scheduleHideMiniPreviewFloat()">
             <div class="text-xs font-black text-dark mb-2">실시간 미리보기</div>
             <canvas id="gen-mini-preview" class="w-full h-[150px] bg-white rounded-xl border border-border"></canvas>
           </div>
@@ -2069,6 +2073,26 @@ body { background: #fff; color: #0F172A; }
   </div>
 </div>
 
+<div id="mini-preview-float"
+  onmouseenter="keepMiniPreviewFloatOpen()"
+  onmouseleave="scheduleHideMiniPreviewFloat()">
+  <div class="h-full flex flex-col">
+    <div class="px-5 py-4 border-b border-border bg-white/95 flex items-start justify-between gap-4 shrink-0">
+      <div class="min-w-0">
+        <div class="text-sm font-black text-dark">실시간 미리보기</div>
+        <div id="mini-preview-float-subtitle" class="text-xs text-muted font-semibold mt-1 truncate">차트 유형과 선택한 열을 확인하세요</div>
+      </div>
+      <div class="text-[11px] font-black text-accent bg-indigo-50 border border-accent/15 px-2.5 py-1 rounded-full shrink-0">즉시 반영</div>
+    </div>
+    <div class="flex-1 min-h-0 p-4 bg-surface">
+      <canvas id="gen-mini-preview-float-canvas" class="bg-white rounded-2xl border border-border"></canvas>
+    </div>
+    <div class="px-5 py-3 border-t border-border bg-white text-[11px] text-muted font-semibold shrink-0">
+      데이터를 수정하면 즉시 반영됩니다.
+    </div>
+  </div>
+</div>
+
 </main>
 
 <script>
@@ -2558,6 +2582,7 @@ function updateChartProps() {
   // Redraw
   if(studioCurrentType) drawStudioChart(studioCurrentType, studioCurrentColor);
   drawMiniPreview();
+  drawMiniPreviewOverlayIfOpen();
 }
 
 // ══════════════════════════════════
@@ -2889,6 +2914,8 @@ function studioSelectTemplate(chartType, title, desc) {
 function studioColorChange(color) {
   studioCurrentColor = color;
   if (studioCurrentType) drawStudioChart(studioCurrentType, color);
+  drawMiniPreview();
+  drawMiniPreviewOverlayIfOpen();
 }
 
 function drawStudioChart(type, color) {
@@ -3537,36 +3564,11 @@ function drawChart(type, color, canvasEl) {
   };
   // ──────────────────────────────────────────────────────────────────
 
-  // Alignment / Data Sort
-  let cData = {
-    labels: [...SAMPLE_DATA.labels], values: [...SAMPLE_DATA.values],
-    values2: [...SAMPLE_DATA.values2], values3: [...SAMPLE_DATA.values3]
-  };
-  if (chartProps.align === '오름차순' || chartProps.align === '내림차순') {
-    let mapped = cData.labels.map((l, i) => ({l, v1: cData.values[i], v2: cData.values2[i], v3: cData.values3[i]}));
-    mapped.sort((a, b) => chartProps.align === '오름차순' ? a.v1 - b.v1 : b.v1 - a.v1);
-    cData.labels = mapped.map(m => m.l);
-    cData.values = mapped.map(m => m.v1);
-    cData.values2 = mapped.map(m => m.v2);
-    cData.values3 = mapped.map(m => m.v3);
+  const cData = buildCurrentChartData({ type, fallbackToSample: selectedCategory !== 'custom' });
+  if (!cData.usable) {
+    drawChartEmptyState(ctx, W, H, '선택한 열로 그릴 수 있는 숫자 데이터가 없습니다.', textColor, mutedColor);
+    return;
   }
-
-  // ── Top-N filter ──────────────────────────────────────────────────
-  if (chartProps.topN > 0 && cData.labels.length > chartProps.topN) {
-    // Sort by value desc, take top N, restore original-ish order
-    const indexed = cData.labels.map((l, i) => ({l, v1:cData.values[i], v2:cData.values2[i], v3:cData.values3[i]}));
-    const top = indexed
-      .slice()
-      .sort((a, b) => b.v1 - a.v1)
-      .slice(0, chartProps.topN)
-      .map(x => x.l);
-    const filtered = indexed.filter(x => top.includes(x.l));
-    cData.labels  = filtered.map(x => x.l);
-    cData.values  = filtered.map(x => x.v1);
-    cData.values2 = filtered.map(x => x.v2);
-    cData.values3 = filtered.map(x => x.v3);
-  }
-  // ──────────────────────────────────────────────────────────────────
 
   // Formatting & Helpers
   const fmt = (v) => Number(v).toFixed(chartProps.labelDecimals);
@@ -3605,7 +3607,7 @@ function drawChart(type, color, canvasEl) {
   const pad = {t:padT, r:40, b:60, l:padL};
   const cW = W - pad.l - pad.r;
   const cH = H - pad.t - pad.b;
-  const max = Math.max(...cData.values, ...cData.values2, ...(cData.values4 || [])) * 1.15;
+  const max = Math.max(1, ...cData.values, ...cData.values2, ...cData.values3, ...(cData.values4 || [])) * 1.15;
 
   let legendX = pad.l;
   function drawLegendDynamic(text, col) {
@@ -3884,7 +3886,7 @@ function drawChart(type, color, canvasEl) {
   }
   else if (type === 'line') {
     gridLines(pad.l, pad.t, pad.l+cW, pad.t+cH, 5);
-    const xs = cData.labels.map((_,i)=>pad.l + i*(cW/(cData.labels.length-1)));
+    const xs = cData.labels.map((_,i)=>pad.l + (cData.labels.length <= 1 ? cW / 2 : i*(cW/(cData.labels.length-1))));
 
     const drawSpline = (vals, color, lbl) => {
       if(!vals || vals.length === 0 || vals.every(v=>!v)) return;
@@ -3915,14 +3917,14 @@ function drawChart(type, color, canvasEl) {
     drawSpline(cData.values, pColor(0), 'Column 1');
     drawSpline(cData.values2, '#38BDF8', 'Column 2');
     drawSpline(cData.values3, '#A855F7', 'Column 3');
-    drawSpline(SAMPLE_DATA.values4, '#FB7185', 'Column 4');
+    drawSpline(cData.values4, '#FB7185', 'Column 4');
     
     xs.forEach((x,i)=>{ label(cData.labels[i], x, pad.t+cH+20, 'center'); });
     for(let i=0;i<=5;i++){ label(Math.round(max/5*i), pad.l-10, pad.t+cH-cH/5*i+4, 'right'); }
   }
   else if (type === 'area') {
     gridLines(pad.l, pad.t, pad.l+cW, pad.t+cH, 5);
-    const xs = cData.labels.map((_,i)=>pad.l + i*(cW/(cData.labels.length-1)));
+    const xs = cData.labels.map((_,i)=>pad.l + (cData.labels.length <= 1 ? cW / 2 : i*(cW/(cData.labels.length-1))));
     const ys  = cData.values.map(v=>pad.t+cH-(v/max)*cH);
     const ys2 = cData.values2.map(v=>pad.t+cH-(v/max)*cH);
     
@@ -3943,7 +3945,11 @@ function drawChart(type, color, canvasEl) {
   else if (type === 'donut' || type === 'pie') {
     const cx=W/2, cy=H/2, outerR=Math.min(cW,cH)*0.42;
     const innerR = type==='donut' ? outerR*0.52 : 0;
-    const pieItems = buildPieDonutDataset(cData).slice(0, 8);
+    const pieItems = buildPieDonutDataset(cData);
+    if (!pieItems.length) {
+      drawChartEmptyState(ctx, W, H, '표시할 데이터가 없습니다.', textColor, mutedColor);
+      return;
+    }
     const colors = pieItems.map((_, i) => pColor(i));
     const sliceData = pieItems.map(item => item.value);
     const total = sliceData.reduce((a,b)=>a+b,0) || 1;
@@ -3999,9 +4005,8 @@ function drawChart(type, color, canvasEl) {
           if (!text || !text.trim()) return null;
           const freq  = cData.values[i] || 10;
           const size  = Math.max(11, Math.min(56, 11 + (freq / maxVal) * 45));
-          // SAMPLE_DATA.categories 우선 → genRows[i][2] 폴백
-          const cat   = (SAMPLE_DATA.categories && SAMPLE_DATA.categories[i])
-            ? SAMPLE_DATA.categories[i]
+          const cat   = (cData.categories && cData.categories[i])
+            ? cData.categories[i]
             : ((genRows[i] && genRows[i][2]) ? genRows[i][2].trim() : '');
           if (cat && !(cat in catMap)) catMap[cat] = catIdx2++;
           const cIdx  = cat ? catMap[cat] % wColors.length : i % wColors.length;
@@ -4081,6 +4086,18 @@ function roundRectStroke(ctx, x, y, w, h, r) {
   ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r);
   ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
   ctx.fill(); ctx.stroke();
+}
+
+function drawChartEmptyState(ctx, W, H, message, textColor='#0F172A', mutedColor='#64748B') {
+  ctx.fillStyle = '#F8FAFC';
+  roundRect(ctx, Math.max(24, W * .12), Math.max(36, H * .28), Math.max(160, W * .76), Math.max(92, H * .28), 18);
+  ctx.fillStyle = textColor;
+  ctx.font = '900 16px Plus Jakarta Sans, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(message, W / 2, H / 2);
+  ctx.fillStyle = mutedColor;
+  ctx.font = '700 12px Plus Jakarta Sans, sans-serif';
+  ctx.fillText('원본 데이터 탭에서 X축과 Y축을 다시 선택해보세요.', W / 2, H / 2 + 24);
 }
 
 // ─── Templates & Gallery ───
@@ -4299,6 +4316,8 @@ function toggleColorMode() {
     }
   }
   if (studioCurrentType) drawStudioChart(studioCurrentType, studioCurrentColor);
+  drawMiniPreview();
+  drawMiniPreviewOverlayIfOpen();
 }
 
 // ── Palette data ───────────────────────────────────────────────────────
@@ -4377,6 +4396,8 @@ function selectPaletteByIdx(idx) {
   updatePaletteTrigger(idx);
   document.getElementById('palette-dropdown').style.display = 'none';
   if (studioCurrentType) drawStudioChart(studioCurrentType, studioCurrentColor);
+  drawMiniPreview();
+  drawMiniPreviewOverlayIfOpen();
 }
 
 function selectPalette(name, c1, c2, c3) {
@@ -4385,6 +4406,8 @@ function selectPalette(name, c1, c2, c3) {
   if (idx >= 0) { selectPaletteByIdx(idx); return; }
   chartProps.paletteColors = [c1, c2, c3];
   if (studioCurrentType) drawStudioChart(studioCurrentType, studioCurrentColor);
+  drawMiniPreview();
+  drawMiniPreviewOverlayIfOpen();
 }
 
 // ══════════════════════════════════
@@ -4737,8 +4760,8 @@ function populateDataCheckSort() {
 
 function refreshGeneralDataViews() {
   renderDataCheckTable();
-  renderGeneralTable();
   updateGenAxisSelects();
+  renderGeneralTable();
   syncGeneralDataToChart();
   saveWorkspace();
 }
@@ -4752,6 +4775,7 @@ function renderGeneralTable() {
   renderSpreadsheetTable('gen-thead', 'gen-tbody', { context:'editor' });
   renderRawDataActions();
   drawMiniPreview();
+  drawMiniPreviewOverlayIfOpen();
 }
 
 function updateAxisBadges() {
@@ -4766,6 +4790,7 @@ function handleAxisChange() {
   syncGeneralDataToChart();
   renderGeneralTable();
   drawMiniPreview();
+  drawMiniPreviewOverlayIfOpen();
 }
 
 function parseStrictChartNumber(value) {
@@ -4794,35 +4819,44 @@ function truncateCanvasText(ctx, text, maxWidth) {
   return result + '…';
 }
 
-function getMiniPreviewItems(sortByValue=false) {
-  const { xIdx, yIdx } = getSelectedAxisIndices();
-  const limit = chartProps.topN > 0 ? Math.min(chartProps.topN, 5) : 5;
-  let items = genRows.map((row, idx) => {
-    const value = parseStrictChartNumber(row?.[yIdx]);
-    const label = String(row?.[xIdx] ?? '').trim() || `행 ${idx + 1}`;
-    return { label, value, rowIndex: idx };
-  }).filter(item => item.value !== null);
-  if (sortByValue) {
-    items = items.sort((a, b) => b.value - a.value);
-  }
-  return items.slice(0, limit);
-}
-
-function drawMiniPreviewEmpty(ctx, cssW, cssH) {
+function drawPreviewEmpty(ctx, W, H, mode, message) {
   ctx.fillStyle = '#F8FAFC';
-  roundRect(ctx, 12, 30, cssW - 24, cssH - 46, 12);
-  ctx.fillStyle = '#94A3B8';
-  ctx.font = '800 12px Plus Jakarta Sans, sans-serif';
+  roundRect(ctx, 14, mode === 'large' ? 18 : 30, W - 28, H - (mode === 'large' ? 36 : 46), mode === 'large' ? 18 : 12);
+  ctx.fillStyle = '#64748B';
+  ctx.font = `${mode === 'large' ? '900 16px' : '800 12px'} Plus Jakarta Sans, sans-serif`;
   ctx.textAlign = 'center';
-  ctx.fillText('미리보기에 사용할 숫자 열을 선택하세요.', cssW / 2, cssH / 2 + 4);
+  ctx.fillText(message, W / 2, H / 2 + (mode === 'large' ? 0 : 4));
 }
 
-function drawMiniPreview() {
-  const canvas = document.getElementById('gen-mini-preview');
-  if (!canvas || selectedCategory !== 'custom') return;
+function makePreviewColorHelper(color) {
+  const hex2rgb = h => {
+    const safe = /^#[0-9a-f]{6}$/i.test(h || '') ? h : '#4F46E5';
+    return {
+      r: parseInt(safe.slice(1,3),16),
+      g: parseInt(safe.slice(3,5),16),
+      b: parseInt(safe.slice(5,7),16)
+    };
+  };
+  const base = hex2rgb(color || studioCurrentColor || '#4F46E5');
+  const solid = [
+    `rgba(${base.r},${base.g},${base.b},${chartProps.opacity || .92})`,
+    '#38BDF8','#A855F7','#FB7185','#10B981','#F59E0B','#EF4444','#64748B'
+  ];
+  return idx => {
+    if (chartProps.colorMode === 'palette' && chartProps.paletteColors?.length) {
+      return chartProps.paletteColors[idx % chartProps.paletteColors.length];
+    }
+    return solid[idx % solid.length];
+  };
+}
+
+function drawPreviewCanvas(canvas, options={}) {
+  if (!canvas) return;
+  const mode = options.mode || 'small';
+  const type = options.type || studioCurrentType || 'bar';
   const rect = canvas.getBoundingClientRect();
-  const cssW = Math.max(220, Math.floor(rect.width || 260));
-  const cssH = Math.max(130, Math.floor(rect.height || 150));
+  const cssW = Math.max(mode === 'large' ? 520 : 220, Math.floor(rect.width || (mode === 'large' ? 590 : 260)));
+  const cssH = Math.max(mode === 'large' ? 300 : 130, Math.floor(rect.height || (mode === 'large' ? 300 : 150)));
   const dpr = window.devicePixelRatio || 1;
   canvas.width = Math.floor(cssW * dpr);
   canvas.height = Math.floor(cssH * dpr);
@@ -4831,25 +4865,34 @@ function drawMiniPreview() {
   ctx.clearRect(0,0,cssW,cssH);
   ctx.fillStyle = '#fff';
   ctx.fillRect(0,0,cssW,cssH);
-  const type = studioCurrentType || 'bar';
-  const barLikeTypes = ['bar', 'racing', 'group', 'stacked'];
-  const sortByValue = barLikeTypes.includes(type) || type === 'pie' || type === 'donut';
-  let items = getMiniPreviewItems(sortByValue);
-  if ((type === 'pie' || type === 'donut')) items = items.filter(item => item.value > 0);
+  const previewLimit = mode === 'small' ? 5 : null;
+  const cData = buildCurrentChartData({ type, fallbackToSample: false, previewLimit });
 
   ctx.fillStyle = '#0F172A';
-  ctx.font = '900 11px Plus Jakarta Sans, sans-serif';
+  ctx.font = `900 ${mode === 'large' ? 16 : 11}px Plus Jakarta Sans, sans-serif`;
   ctx.textAlign = 'left';
-  ctx.fillText(chartTypeLabel(type), 12, 17);
+  ctx.fillText(chartTypeLabel(type), mode === 'large' ? 18 : 12, mode === 'large' ? 24 : 17);
 
-  if (!items.length) {
-    drawMiniPreviewEmpty(ctx, cssW, cssH);
+  if (!cData.usable) {
+    drawPreviewEmpty(ctx, cssW, cssH, mode, mode === 'large' ? '선택한 열로 그릴 수 있는 숫자 데이터가 없습니다.' : '미리보기에 사용할 숫자 열을 선택하세요.');
+    return;
+  }
+  if (!cData.labels.length) {
+    drawPreviewEmpty(ctx, cssW, cssH, mode, '표시할 데이터가 없습니다.');
     return;
   }
 
   if (type === 'pie' || type === 'donut') {
+    const items = buildPieDonutDataset(cData);
+    if (!items.length) {
+      drawPreviewEmpty(ctx, cssW, cssH, mode, '표시할 데이터가 없습니다.');
+      return;
+    }
+    const pColor = makePreviewColorHelper(studioCurrentColor);
     const total = items.reduce((sum, item) => sum + item.value, 0) || 1;
-    const cx = cssW * 0.33, cy = cssH * 0.57, r = Math.min(cssW, cssH) * 0.25;
+    const cx = mode === 'large' ? cssW * 0.34 : cssW * 0.33;
+    const cy = mode === 'large' ? cssH * 0.52 : cssH * 0.57;
+    const r = Math.min(cssW, cssH) * (mode === 'large' ? 0.31 : 0.25);
     let angle = -Math.PI / 2;
     items.forEach((item, i) => {
       const sweep = (item.value / total) * Math.PI * 2;
@@ -4857,7 +4900,7 @@ function drawMiniPreview() {
       ctx.moveTo(cx, cy);
       ctx.arc(cx, cy, r, angle, angle + sweep);
       ctx.closePath();
-      ctx.fillStyle = ['#4F46E5','#FF6B35','#10B981','#38BDF8','#A78BFA'][i % 5];
+      ctx.fillStyle = pColor(i);
       ctx.fill();
       angle += sweep;
     });
@@ -4868,13 +4911,13 @@ function drawMiniPreview() {
       ctx.fill();
     }
     items.forEach((item, i) => {
-      const y = 40 + i * 19;
-      ctx.fillStyle = ['#4F46E5','#FF6B35','#10B981','#38BDF8','#A78BFA'][i % 5];
-      roundRect(ctx, cssW * .62, y - 8, 10, 10, 3);
+      const y = (mode === 'large' ? 54 : 40) + i * (mode === 'large' ? 25 : 19);
+      ctx.fillStyle = pColor(i);
+      roundRect(ctx, cssW * .62, y - 9, mode === 'large' ? 12 : 10, mode === 'large' ? 12 : 10, 3);
       ctx.fillStyle = '#475569';
-      ctx.font = '800 10px Plus Jakarta Sans, sans-serif';
+      ctx.font = `800 ${mode === 'large' ? 12 : 10}px Plus Jakarta Sans, sans-serif`;
       ctx.textAlign = 'left';
-      ctx.fillText(truncateCanvasText(ctx, item.label, cssW * .25), cssW * .62 + 16, y);
+      ctx.fillText(truncateCanvasText(ctx, item.label, cssW * .25), cssW * .62 + (mode === 'large' ? 20 : 16), y);
       ctx.textAlign = 'right';
       ctx.fillText(Math.round((item.value / total) * 100) + '%', cssW - 12, y);
     });
@@ -4882,16 +4925,17 @@ function drawMiniPreview() {
   }
 
   if (type === 'line' || type === 'area') {
-    const pad = { l:18, r:12, t:34, b:20 };
+    const pad = mode === 'large' ? { l:52, r:28, t:48, b:48 } : { l:18, r:12, t:34, b:20 };
     const w = cssW - pad.l - pad.r;
     const h = cssH - pad.t - pad.b;
-    const minVal = Math.min(...items.map(i => i.value), 0);
-    const maxVal = Math.max(...items.map(i => i.value), 1);
+    const minVal = Math.min(...cData.values, 0);
+    const maxVal = Math.max(...cData.values, 1);
     const range = Math.max(1, maxVal - minVal);
-    const points = items.map((item, i) => ({
-      x: pad.l + (items.length === 1 ? w / 2 : i * (w / (items.length - 1))),
-      y: pad.t + h - ((item.value - minVal) / range) * h,
-      item
+    const points = cData.values.map((value, i) => ({
+      x: pad.l + (cData.values.length === 1 ? w / 2 : i * (w / (cData.values.length - 1))),
+      y: pad.t + h - ((value - minVal) / range) * h,
+      label: cData.labels[i],
+      value
     }));
     ctx.strokeStyle = '#E2E8F0';
     ctx.lineWidth = 1;
@@ -4911,35 +4955,188 @@ function drawMiniPreview() {
     ctx.beginPath();
     points.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
     ctx.strokeStyle = '#4F46E5';
-    ctx.lineWidth = 2.4;
+    ctx.lineWidth = mode === 'large' ? 3 : 2.4;
     ctx.stroke();
     points.forEach(p => {
-      ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
+      ctx.beginPath(); ctx.arc(p.x, p.y, mode === 'large' ? 4 : 3, 0, Math.PI*2);
       ctx.fillStyle = '#4F46E5'; ctx.fill();
     });
+    if (mode === 'large') {
+      ctx.fillStyle = '#64748B';
+      ctx.font = '800 11px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'center';
+      points.forEach((p, i) => {
+        if (i % Math.ceil(points.length / 6) === 0) ctx.fillText(truncateCanvasText(ctx, p.label, 64), p.x, cssH - 22);
+      });
+      ctx.textAlign = 'right';
+      for (let i=0; i<=3; i++) {
+        const value = minVal + range * (i / 3);
+        ctx.fillText(formatMiniValue(value), pad.l - 8, pad.t + h - h * (i / 3) + 4);
+      }
+    }
     return;
   }
 
-  const maxVal = Math.max(...items.map(i => Math.abs(i.value)), 1);
-  const labelW = Math.min(104, cssW * .38);
-  const barX = labelW + 14;
-  const barW = Math.max(44, cssW - barX - 48);
-  const rowH = Math.min(22, (cssH - 38) / items.length);
-  items.forEach((item, i) => {
-    const y = 35 + i * rowH;
+  const pColor = makePreviewColorHelper(studioCurrentColor);
+  if (type === 'racing') {
+    drawPreviewHorizontalBars(ctx, cData, { cssW, cssH, mode, pColor, titlePad: mode === 'large' ? 44 : 30 });
+    return;
+  }
+  if (type === 'group') {
+    drawPreviewGroupedBars(ctx, cData, { cssW, cssH, mode, pColor });
+    return;
+  }
+  if (type === 'stacked') {
+    drawPreviewStackedBars(ctx, cData, { cssW, cssH, mode, pColor });
+    return;
+  }
+  drawPreviewVerticalBars(ctx, cData, { cssW, cssH, mode, pColor });
+}
+
+function drawPreviewHorizontalBars(ctx, cData, opts) {
+  const { cssW, cssH, mode, pColor, titlePad } = opts;
+  const maxVal = Math.max(...cData.values.map(v => Math.abs(v)), 1);
+  const labelW = mode === 'large' ? Math.min(170, cssW * .32) : Math.min(104, cssW * .38);
+  const barX = labelW + (mode === 'large' ? 24 : 14);
+  const barW = Math.max(44, cssW - barX - (mode === 'large' ? 78 : 48));
+  const rowH = Math.min(mode === 'large' ? 31 : 22, (cssH - titlePad - 12) / cData.labels.length);
+  cData.labels.forEach((label, i) => {
+    const value = cData.values[i];
+    const y = titlePad + i * rowH;
     ctx.fillStyle = '#475569';
-    ctx.font = '800 10.5px Plus Jakarta Sans, sans-serif';
+    ctx.font = `800 ${mode === 'large' ? 12 : 10.5}px Plus Jakarta Sans, sans-serif`;
     ctx.textAlign = 'right';
-    ctx.fillText(truncateCanvasText(ctx, item.label, labelW - 4), labelW, y + 12);
+    ctx.fillText(truncateCanvasText(ctx, label, labelW - 4), labelW, y + (mode === 'large' ? 16 : 12));
     ctx.fillStyle = '#EEF2FF';
-    roundRect(ctx, barX, y + 3, barW, 10, 5);
-    ctx.fillStyle = '#4F46E5';
-    roundRect(ctx, barX, y + 3, Math.max(3, (Math.abs(item.value) / maxVal) * barW), 10, 5);
+    roundRect(ctx, barX, y + 4, barW, mode === 'large' ? 14 : 10, 6);
+    ctx.fillStyle = pColor(i);
+    roundRect(ctx, barX, y + 4, Math.max(3, (Math.abs(value) / maxVal) * barW), mode === 'large' ? 14 : 10, 6);
     ctx.fillStyle = '#0F172A';
-    ctx.font = '900 10px Plus Jakarta Sans, sans-serif';
+    ctx.font = `900 ${mode === 'large' ? 12 : 10}px Plus Jakarta Sans, sans-serif`;
     ctx.textAlign = 'left';
-    ctx.fillText(formatMiniValue(item.value), barX + barW + 7, y + 12);
+    ctx.fillText(formatMiniValue(value), barX + barW + 7, y + (mode === 'large' ? 16 : 12));
   });
+}
+
+function drawPreviewVerticalBars(ctx, cData, opts) {
+  const { cssW, cssH, mode, pColor } = opts;
+  const pad = mode === 'large' ? { l:52, r:24, t:46, b:54 } : { l:18, r:12, t:32, b:24 };
+  const w = cssW - pad.l - pad.r;
+  const h = cssH - pad.t - pad.b;
+  const maxVal = Math.max(...cData.values.map(v => Math.abs(v)), 1);
+  ctx.strokeStyle = '#E2E8F0';
+  ctx.lineWidth = 1;
+  for (let i=0; i<=3; i++) {
+    const y = pad.t + h * (i / 3);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + w, y); ctx.stroke();
+  }
+  const gap = w / cData.labels.length;
+  const bw = Math.max(mode === 'large' ? 16 : 7, gap * (1 - (chartProps.barGap || 20) / 100) * .72);
+  cData.labels.forEach((label, i) => {
+    const value = cData.values[i];
+    const bh = Math.max(2, Math.abs(value) / maxVal * h);
+    const x = pad.l + gap * i + (gap - bw) / 2;
+    const y = pad.t + h - bh;
+    ctx.fillStyle = pColor(i);
+    roundRect(ctx, x, y, bw, bh, mode === 'large' ? 5 : 3);
+    ctx.fillStyle = '#0F172A';
+    ctx.font = `900 ${mode === 'large' ? 11 : 8.5}px Plus Jakarta Sans, sans-serif`;
+    ctx.textAlign = 'center';
+    if (mode === 'large' || cData.labels.length <= 5) ctx.fillText(formatMiniValue(value), x + bw / 2, y - 6);
+    ctx.fillStyle = '#64748B';
+    ctx.font = `800 ${mode === 'large' ? 11 : 8.5}px Plus Jakarta Sans, sans-serif`;
+    ctx.fillText(truncateCanvasText(ctx, label, Math.max(28, gap - 4)), x + bw / 2, pad.t + h + (mode === 'large' ? 22 : 14));
+  });
+}
+
+function drawPreviewGroupedBars(ctx, cData, opts) {
+  const { cssW, cssH, mode, pColor } = opts;
+  const pad = mode === 'large' ? { l:52, r:24, t:48, b:54 } : { l:18, r:12, t:34, b:24 };
+  const w = cssW - pad.l - pad.r;
+  const h = cssH - pad.t - pad.b;
+  const maxVal = Math.max(...cData.values, ...cData.values2, ...cData.values3, 1);
+  const gap = w / cData.labels.length;
+  const groupW = gap * .72;
+  const bw = Math.max(mode === 'large' ? 7 : 3, groupW / 3);
+  cData.labels.forEach((label, i) => {
+    [cData.values[i], cData.values2[i], cData.values3[i]].forEach((value, s) => {
+      const bh = Math.max(2, (Math.max(0, value) / maxVal) * h);
+      const x = pad.l + gap * i + (gap - groupW) / 2 + bw * s;
+      const y = pad.t + h - bh;
+      ctx.fillStyle = pColor(s);
+      roundRect(ctx, x, y, bw * .82, bh, 3);
+    });
+    ctx.fillStyle = '#64748B';
+    ctx.font = `800 ${mode === 'large' ? 11 : 8.5}px Plus Jakarta Sans, sans-serif`;
+    ctx.textAlign = 'center';
+    if (mode === 'large' || cData.labels.length <= 5) ctx.fillText(truncateCanvasText(ctx, label, gap - 4), pad.l + gap * i + gap / 2, pad.t + h + (mode === 'large' ? 22 : 14));
+  });
+}
+
+function drawPreviewStackedBars(ctx, cData, opts) {
+  const { cssW, cssH, mode, pColor } = opts;
+  const pad = mode === 'large' ? { l:52, r:24, t:48, b:54 } : { l:18, r:12, t:34, b:24 };
+  const w = cssW - pad.l - pad.r;
+  const h = cssH - pad.t - pad.b;
+  const totals = cData.values.map((v, i) => Math.max(0, v) + Math.max(0, cData.values2[i] || 0) + Math.max(0, cData.values3[i] || 0));
+  const maxVal = Math.max(...totals, 1);
+  const gap = w / cData.labels.length;
+  const bw = Math.max(mode === 'large' ? 18 : 8, gap * .56);
+  cData.labels.forEach((label, i) => {
+    let y = pad.t + h;
+    [cData.values[i], cData.values2[i], cData.values3[i]].forEach((value, s) => {
+      const bh = Math.max(0, (Math.max(0, value) / maxVal) * h);
+      y -= bh;
+      ctx.fillStyle = pColor(s);
+      roundRect(ctx, pad.l + gap * i + (gap - bw) / 2, y, bw, bh || 1, 3);
+    });
+    ctx.fillStyle = '#64748B';
+    ctx.font = `800 ${mode === 'large' ? 11 : 8.5}px Plus Jakarta Sans, sans-serif`;
+    ctx.textAlign = 'center';
+    if (mode === 'large' || cData.labels.length <= 5) ctx.fillText(truncateCanvasText(ctx, label, gap - 4), pad.l + gap * i + gap / 2, pad.t + h + (mode === 'large' ? 22 : 14));
+  });
+}
+
+function drawMiniPreview() {
+  const canvas = document.getElementById('gen-mini-preview');
+  if (!canvas || selectedCategory !== 'custom') return;
+  drawPreviewCanvas(canvas, { mode:'small' });
+}
+
+let miniPreviewFloatTimer = null;
+
+function updateMiniPreviewFloatSubtitle() {
+  const el = document.getElementById('mini-preview-float-subtitle');
+  if (!el) return;
+  const { xIdx, yIdx } = getSelectedAxisIndices();
+  el.textContent = `${chartTypeLabel(studioCurrentType || 'bar')} · X축 ${columnBadge(xIdx)} ${genHeaders[xIdx] || '열'} · Y축 ${columnBadge(yIdx)} ${genHeaders[yIdx] || '열'}`;
+}
+
+function showMiniPreviewFloat() {
+  const floatEl = document.getElementById('mini-preview-float');
+  if (!floatEl || selectedCategory !== 'custom') return;
+  clearTimeout(miniPreviewFloatTimer);
+  updateMiniPreviewFloatSubtitle();
+  floatEl.classList.add('show');
+  requestAnimationFrame(() => drawPreviewCanvas(document.getElementById('gen-mini-preview-float-canvas'), { mode:'large' }));
+}
+
+function keepMiniPreviewFloatOpen() {
+  clearTimeout(miniPreviewFloatTimer);
+}
+
+function scheduleHideMiniPreviewFloat() {
+  clearTimeout(miniPreviewFloatTimer);
+  miniPreviewFloatTimer = setTimeout(() => {
+    document.getElementById('mini-preview-float')?.classList.remove('show');
+  }, 140);
+}
+
+function drawMiniPreviewOverlayIfOpen() {
+  const floatEl = document.getElementById('mini-preview-float');
+  if (!floatEl || !floatEl.classList.contains('show')) return;
+  updateMiniPreviewFloatSubtitle();
+  drawPreviewCanvas(document.getElementById('gen-mini-preview-float-canvas'), { mode:'large' });
 }
 
 function renderRawDataActions() {
@@ -5148,78 +5345,173 @@ function parseChartNumber(val) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function cloneSampleChartData() {
+  return {
+    labels: [...(SAMPLE_DATA.labels || [])],
+    values: [...(SAMPLE_DATA.values || [])],
+    values2: [...(SAMPLE_DATA.values2 || [])],
+    values3: [...(SAMPLE_DATA.values3 || [])],
+    values4: [...(SAMPLE_DATA.values4 || [])],
+    categories: [...(SAMPLE_DATA.categories || [])],
+    xIdx: 0,
+    yIdx: 1,
+    usable: (SAMPLE_DATA.values || []).some(v => Number.isFinite(Number(v)))
+  };
+}
+
 function getNumericColumns() {
   return genHeaders
     .map((h, idx) => ({
       idx,
       header: h,
-      count: genRows.filter(r => Number.isFinite(parseFloat(String(r?.[idx] ?? '').replace(/,/g, '').trim()))).length
+      count: genRows.filter(r => parseStrictChartNumber(r?.[idx]) !== null).length
     }))
     .filter(col => col.count > 0)
     .sort((a, b) => b.count - a.count);
 }
 
-function getCurrentChartDataset() {
-  const hasCustomRows = selectedCategory === 'custom' && Array.isArray(genRows) && genRows.some(row => row.some(cell => String(cell ?? '').trim() !== ''));
-  if (hasCustomRows) {
-    const { xIdx } = getSelectedAxisIndices();
-    const numericCols = getNumericColumns();
-    const selectedY = parseInt(document.getElementById('gen-y-axis')?.value ?? -1, 10);
-    const yIdx = numericCols.some(c => c.idx === selectedY) ? selectedY : (numericCols[0]?.idx ?? selectedY);
-    const labels = genRows.map((r, i) => String(r?.[xIdx] ?? '').trim() || `행 ${i + 1}`);
-    const values = genRows.map(r => parseChartNumber(r?.[yIdx]));
-    const usable = labels.length > 0 && values.some(v => v > 0 || v < 0);
-    return {
-      labels,
-      values,
-      values2: SAMPLE_DATA.values2 || [],
-      values3: SAMPLE_DATA.values3 || [],
-      xIdx,
-      yIdx,
-      usable
-    };
+function getSecondarySeriesIndices(xIdx, yIdx) {
+  const remaining = [];
+  for (let i = 0; i < genHeaders.length; i++) {
+    if (i !== xIdx && i !== yIdx) remaining.push(i);
   }
+  return remaining.slice(0, 3);
+}
+
+function buildBaseGeneralChartData(type = studioCurrentType || 'bar') {
+  if (selectedCategory !== 'custom' || !Array.isArray(genRows) || genRows.length === 0) return null;
+
+  if (type === 'word') {
+    const wordIdx = parseInt(document.getElementById('gen-word-axis')?.value ?? 0, 10);
+    const freqIdx = parseInt(document.getElementById('gen-freq-axis')?.value ?? 1, 10);
+    const catIdx  = parseInt(document.getElementById('gen-cat-axis')?.value ?? -1, 10);
+    const rows = genRows.map((row, idx) => {
+      const value = parseStrictChartNumber(row?.[freqIdx]);
+      const label = String(row?.[wordIdx] ?? '').trim() || `행 ${idx + 1}`;
+      if (value === null) return null;
+      return {
+        label,
+        value,
+        value2: 0,
+        value3: 0,
+        value4: 0,
+        category: catIdx >= 0 ? String(row?.[catIdx] ?? '').trim() : ''
+      };
+    }).filter(Boolean);
+    return chartRowsToData(rows, { xIdx: wordIdx, yIdx: freqIdx });
+  }
+
+  const { xIdx, yIdx } = getSelectedAxisIndices();
+  if (xIdx < 0 || yIdx < 0 || xIdx >= genHeaders.length || yIdx >= genHeaders.length) {
+    return { labels:[], values:[], values2:[], values3:[], values4:[], categories:[], xIdx, yIdx, usable:false, reason:'invalid-axis' };
+  }
+  const secondary = getSecondarySeriesIndices(xIdx, yIdx);
+  const rows = genRows.map((row, idx) => {
+    const value = parseStrictChartNumber(row?.[yIdx]);
+    if (value === null) return null;
+    const label = String(row?.[xIdx] ?? '').trim() || `행 ${idx + 1}`;
+    return {
+      label,
+      value,
+      value2: parseStrictChartNumber(row?.[secondary[0]]) ?? 0,
+      value3: parseStrictChartNumber(row?.[secondary[1]]) ?? 0,
+      value4: parseStrictChartNumber(row?.[secondary[2]]) ?? 0,
+      category: ''
+    };
+  }).filter(Boolean);
+  return chartRowsToData(rows, { xIdx, yIdx });
+}
+
+function chartRowsToData(rows, meta={}) {
   return {
-    labels: SAMPLE_DATA.labels || [],
-    values: SAMPLE_DATA.values || [],
-    values2: SAMPLE_DATA.values2 || [],
-    values3: SAMPLE_DATA.values3 || [],
-    xIdx: 0,
-    yIdx: 1,
-    usable: (SAMPLE_DATA.values || []).some(v => v > 0 || v < 0)
+    labels: rows.map(r => r.label),
+    values: rows.map(r => r.value),
+    values2: rows.map(r => r.value2 || 0),
+    values3: rows.map(r => r.value3 || 0),
+    values4: rows.map(r => r.value4 || 0),
+    categories: rows.map(r => r.category || ''),
+    xIdx: meta.xIdx ?? 0,
+    yIdx: meta.yIdx ?? 1,
+    usable: rows.length > 0
   };
 }
 
+function applyChartDataTransforms(data, options={}) {
+  const previewLimit = options.previewLimit ?? null;
+  const pairs = (data.labels || []).map((label, i) => ({
+    pos: i,
+    label,
+    value: Number(data.values?.[i]) || 0,
+    value2: Number(data.values2?.[i]) || 0,
+    value3: Number(data.values3?.[i]) || 0,
+    value4: Number(data.values4?.[i]) || 0,
+    category: data.categories?.[i] || ''
+  }));
+
+  let ordered = pairs.slice();
+  if (chartProps.align === '오름차순' || chartProps.align === '내림차순') {
+    ordered.sort((a, b) => chartProps.align === '오름차순' ? a.value - b.value : b.value - a.value);
+  }
+
+  const topN = parseInt(chartProps.topN, 10) || 0;
+  if (topN > 0 && ordered.length > topN) {
+    const keep = new Set(
+      ordered.slice().sort((a, b) => b.value - a.value).slice(0, topN).map(item => item.pos)
+    );
+    ordered = ordered.filter(item => keep.has(item.pos));
+  }
+  if (previewLimit && ordered.length > previewLimit) {
+    ordered = ordered.slice(0, previewLimit);
+  }
+
+  return {
+    labels: ordered.map(item => item.label),
+    values: ordered.map(item => item.value),
+    values2: ordered.map(item => item.value2),
+    values3: ordered.map(item => item.value3),
+    values4: ordered.map(item => item.value4),
+    categories: ordered.map(item => item.category),
+    xIdx: data.xIdx,
+    yIdx: data.yIdx,
+    usable: Boolean(data.usable && ordered.length > 0),
+    reason: data.reason || ''
+  };
+}
+
+function buildCurrentChartData(options={}) {
+  const type = options.type || studioCurrentType || currentChartType || 'bar';
+  const fallbackToSample = options.fallbackToSample !== false;
+  const previewLimit = options.previewLimit ?? null;
+  const base = selectedCategory === 'custom' ? buildBaseGeneralChartData(type) : null;
+  if (base && base.usable) return applyChartDataTransforms(base, { previewLimit });
+  if (selectedCategory === 'custom' && !fallbackToSample) {
+    return applyChartDataTransforms(base || { labels:[], values:[], values2:[], values3:[], values4:[], categories:[], usable:false, reason:'no-custom-data' }, { previewLimit });
+  }
+  return applyChartDataTransforms(cloneSampleChartData(), { previewLimit });
+}
+
+function getCurrentChartDataset() {
+  return buildCurrentChartData({ fallbackToSample: true });
+}
+
 function buildPieDonutDataset(cData) {
-  const source = getCurrentChartDataset();
-  const labels = (source.usable ? source.labels : cData.labels).slice();
-  const values = (source.usable ? source.values : cData.values).map(v => Math.max(0, parseChartNumber(v)));
-  const pairs = labels.map((label, i) => ({ label: String(label || `항목 ${i + 1}`), value: values[i] || 0 }))
-    .filter(item => item.value > 0);
-  return pairs.length ? pairs : [
-    { label:'항목 1', value:38 },
-    { label:'항목 2', value:27 },
-    { label:'항목 3', value:18 },
-    { label:'항목 4', value:12 },
-    { label:'항목 5', value:5 }
-  ];
+  return (cData.labels || []).map((label, i) => ({
+    label: String(label || `항목 ${i + 1}`),
+    value: Math.max(0, Number(cData.values?.[i]) || 0)
+  })).filter(item => item.value > 0);
 }
 
 function buildRacingDataset(cData) {
-  const source = getCurrentChartDataset();
-  const labels = (source.usable ? source.labels : cData.labels).map((l, i) => String(l || `항목 ${i + 1}`)).slice(0, 10);
-  const values = (source.usable ? source.values : cData.values).map(v => Math.max(0, parseChartNumber(v))).slice(0, labels.length);
+  const labels = (cData.labels || []).map((l, i) => String(l || `항목 ${i + 1}`)).slice(0, 10);
+  const values = (cData.values || []).map(v => Math.max(0, Number(v) || 0)).slice(0, labels.length);
   if (!labels.length || !values.some(v => v > 0)) {
     return {
-      brands: ['항목 A', '항목 B', '항목 C', '항목 D', '항목 E'],
-      frames: [
-        { year: 2024, values: [30, 50, 20, 80, 40] },
-        { year: 2025, values: [80, 75, 85, 55, 60] }
-      ]
+      brands: [],
+      frames: []
     };
   }
   const previous = (cData.values2 || []).slice(0, labels.length).map((v, i) => {
-    const parsed = parseChartNumber(v);
+    const parsed = Number(v) || 0;
     return parsed > 0 ? parsed : Math.max(1, values[i] * 0.55);
   });
   return {
@@ -5234,39 +5526,15 @@ function buildRacingDataset(cData) {
 function syncGeneralDataToChart() {
   if (selectedCategory !== 'custom') return;
 
-  // ── 워드 클라우드: 3축(단어, 빈도수, 카테고리) ──────────────────────
-  if (studioCurrentType === 'word') {
-    const wordIdx = parseInt(document.getElementById('gen-word-axis')?.value ?? 0);
-    const freqIdx = parseInt(document.getElementById('gen-freq-axis')?.value ?? 1);
-    const catIdx  = parseInt(document.getElementById('gen-cat-axis')?.value ?? -1);
-
-    SAMPLE_DATA.labels     = genRows.map(r => r[wordIdx] || '');
-    SAMPLE_DATA.values     = genRows.map(r => parseChartNumber(r[freqIdx]));
-    SAMPLE_DATA.categories = catIdx >= 0
-      ? genRows.map(r => (r[catIdx] || '').trim())
-      : [];
-    // values2/values3 not needed for word cloud
-    SAMPLE_DATA.values2 = [];
-    SAMPLE_DATA.values3 = [];
-  } else {
-    // ── 일반 차트: X/Y축 ─────────────────────────────────────────────
-    const xIdx = parseInt(document.getElementById('gen-x-axis').value);
-    const yIdx = parseInt(document.getElementById('gen-y-axis').value);
-    if (isNaN(xIdx) || isNaN(yIdx)) return;
-
-    SAMPLE_DATA.labels = genRows.map(r => r[xIdx] || '');
-    SAMPLE_DATA.values = genRows.map(r => parseChartNumber(r[yIdx]));
-    SAMPLE_DATA.categories = [];
-
-    let remainingCols = [];
-    for(let i=0; i<genHeaders.length; i++) {
-      if(i !== xIdx && i !== yIdx) remainingCols.push(i);
-    }
-    SAMPLE_DATA.values2 = remainingCols.length > 0 ? genRows.map(r => parseChartNumber(r[remainingCols[0]])) : [];
-    SAMPLE_DATA.values3 = remainingCols.length > 1 ? genRows.map(r => parseChartNumber(r[remainingCols[1]])) : [];
-    SAMPLE_DATA.values4 = remainingCols.length > 2 ? genRows.map(r => parseChartNumber(r[remainingCols[2]])) : [];
-  }
+  const base = buildBaseGeneralChartData(studioCurrentType || 'bar');
+  SAMPLE_DATA.labels = base?.labels || [];
+  SAMPLE_DATA.values = base?.values || [];
+  SAMPLE_DATA.values2 = base?.values2 || [];
+  SAMPLE_DATA.values3 = base?.values3 || [];
+  SAMPLE_DATA.values4 = base?.values4 || [];
+  SAMPLE_DATA.categories = base?.categories || [];
   drawMiniPreview();
+  drawMiniPreviewOverlayIfOpen();
 
   if (studioCurrentType && document.getElementById('editor-studio').classList.contains('hide') === false) {
     drawStudioChart(studioCurrentType, studioCurrentColor);
@@ -5336,6 +5604,7 @@ function go(pageId, tabId=null) {
       updateGenAxisSelects();
       syncGeneralDataToChart();
       drawMiniPreview();
+      drawMiniPreviewOverlayIfOpen();
     } else {
       document.getElementById('gen-toolbar').classList.add('hide');
       document.getElementById('view-general').classList.add('hide');
@@ -5390,8 +5659,12 @@ function switchEditorTab(tab, btn) {
     // Redraw all existing widgets after layout settles
     requestAnimationFrame(() => dashboardCharts.forEach(c => dbRedrawWidget(c.id)));
   } else if (tab === 'raw') {
+    updateGenAxisSelects();
+    syncGeneralDataToChart();
+    renderGeneralTable();
     renderRawDataActions();
     drawMiniPreview();
+    drawMiniPreviewOverlayIfOpen();
   }
 }
 
