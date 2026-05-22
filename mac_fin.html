@@ -122,20 +122,20 @@ body { background: #fff; color: #0F172A; }
 .create-flow-step.active .num { background:#4F46E5; border-color:#4F46E5; color:#fff; box-shadow:0 6px 14px rgba(79,70,229,.18); }
 .create-flow-line { width:34px; height:1px; background:#E2E8F0; }
 .create-flow-line.done { background:#A7F3D0; }
-.dw-table-scroll { flex:1; min-height:0; min-width:0; overflow:auto; padding:12px; max-width:100%; box-sizing:border-box; background:#F8FAFC; }
-.dw-table-frame { display:inline-block; background:#fff; border:1px solid #E2E8F0; border-radius:10px; box-shadow:0 1px 3px rgba(15,23,42,.04); min-height:100%; min-width:100%; overflow:visible; margin:0 10px 10px 0; }
-.dw-table { border-collapse:separate; border-spacing:0; font-size:12.5px; width:max-content; min-width:100%; }
+.dw-table-scroll { flex:1; min-height:0; min-width:0; overflow:auto; padding:14px; max-width:100%; box-sizing:border-box; background:#F8FAFC; }
+.dw-table-frame { display:inline-block; background:#fff; border:1px solid #E2E8F0; border-radius:10px; box-shadow:0 1px 3px rgba(15,23,42,.04); min-height:100%; min-width:100%; overflow:visible; margin:0 14px 14px 0; }
+.dw-table { border-collapse:separate; border-spacing:0; font-size:12px; width:max-content; min-width:100%; }
 .dw-table th { position:sticky; top:0; z-index:4; background:#F8FAFC; border-bottom:1px solid #CBD5E1; border-right:1px solid #E2E8F0; color:#475569; font-size:12px; font-weight:800; padding:0; }
-.dw-table td { border-right:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0; background:#fff; padding:0; min-width:124px; }
+.dw-table td { border-right:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0; background:#fff; padding:0; min-width:108px; }
 .dw-row-index { position:sticky; left:0; z-index:5; min-width:52px !important; width:52px; background:#F8FAFC !important; color:#94A3B8; text-align:center; font-weight:800; border-right:1px solid #CBD5E1 !important; }
 .dw-table tbody .dw-row-index { z-index:3; font-size:11px; }
-.dw-row-index-inner { position:relative; display:flex; align-items:center; justify-content:center; min-height:32px; padding:0 15px 0 7px; }
+.dw-row-index-inner { position:relative; display:flex; align-items:center; justify-content:center; min-height:30px; padding:0 15px 0 7px; }
 .dw-row-delete { position:absolute; right:4px; top:50%; transform:translateY(-50%); width:16px; height:16px; border-radius:5px; display:flex; align-items:center; justify-content:center; color:#CBD5E1; opacity:.35; transition:all .16s; font-size:13px; line-height:1; }
 .dw-row-index:hover .dw-row-delete { opacity:1; color:#94A3B8; background:#F1F5F9; }
 .dw-row-delete:hover { color:#DC2626 !important; background:#FEF2F2 !important; }
 .dw-head-input,.dw-cell-input { width:100%; min-width:0; background:transparent; outline:none; border:0; }
-.dw-head-input { padding:7px 9px; color:#0F172A; font-weight:800; }
-.dw-cell-input { padding:7px 9px; color:#0F172A; font-weight:600; min-height:32px; }
+.dw-head-input { padding:6px 8px; color:#0F172A; font-weight:800; }
+.dw-cell-input { padding:6px 8px; color:#0F172A; font-weight:600; min-height:30px; }
 .dw-col-badge { display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; border-radius:6px; background:#EEF2FF; color:#4F46E5; font-size:10px; font-weight:900; }
 .dw-table th.dw-col-x, .dw-table td.dw-col-x { background:#EFF6FF !important; }
 .dw-table th.dw-col-y, .dw-table td.dw-col-y { background:#F5F3FF !important; }
@@ -161,6 +161,9 @@ body { background: #fff; color: #0F172A; }
 .dw-legend-text { color:#0F172A; background:#F8FAFC; border-color:#CBD5E1; }
 .dw-legend-empty { color:#DC2626; background:#FEF2F2; border-color:#FCA5A5; }
 .raw-editor-body { flex:1; min-height:0; min-width:0; overflow:hidden; padding:16px 24px; background:#F8FAFC; display:flex; flex-direction:column; }
+.data-check-table-body { flex:1; min-height:0; min-width:0; overflow:hidden; padding:16px 24px 18px 16px; background:#F8FAFC; display:flex; flex-direction:column; }
+.mini-preview-card { position:relative; z-index:1; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; transform-origin:bottom right; }
+.mini-preview-card:hover { transform:scale(1.32); z-index:40; border-color:#C7D2FE; box-shadow:0 18px 40px rgba(15,23,42,.16); }
 .project-title-input { width:100%; border:0; outline:0; background:transparent; color:#0F172A; font-size:15px; font-weight:900; padding:0; }
 .project-title-input:focus { color:#4F46E5; }
 .project-card-thumb { aspect-ratio:16/10; background:#F8FAFC; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
@@ -769,15 +772,6 @@ body { background: #fff; color: #0F172A; }
         <span class="dw-legend-chip dw-legend-text align-middle mx-0.5">문자</span>
         <span class="dw-legend-chip dw-legend-empty align-middle mx-0.5">빈칸</span>을 빠르게 점검할 수 있습니다.
       </p>
-      <div class="border border-border rounded-2xl p-4 bg-surface/70 mb-6">
-        <div class="text-[11px] font-black text-muted tracking-widest mb-3">셀 색상 안내</div>
-        <div class="flex flex-wrap gap-2">
-          <span class="dw-legend-chip dw-legend-number">숫자</span>
-          <span class="dw-legend-chip dw-legend-date">날짜</span>
-          <span class="dw-legend-chip dw-legend-text">문자</span>
-          <span class="dw-legend-chip dw-legend-empty">빈칸</span>
-        </div>
-      </div>
       <div class="space-y-4">
         <div class="border border-border rounded-2xl p-4 bg-slate-50/80">
           <div class="text-sm font-extrabold text-dark mb-1.5">1. 열 제목 확인</div>
@@ -813,12 +807,14 @@ body { background: #fff; color: #0F172A; }
         <button onclick="undoDataCheck()" class="dw-mini-btn warn">변경 되돌리기</button>
         <span id="dc-count" class="ml-auto text-xs font-bold text-muted bg-surface border border-border px-3 py-1.5 rounded-full">0행 · 0열</span>
       </div>
-      <div class="dw-table-scroll">
-        <div class="dw-table-frame">
-          <table class="dw-table text-left">
-            <thead id="dc-thead"></thead>
-            <tbody id="dc-tbody"></tbody>
-          </table>
+      <div class="data-check-table-body">
+        <div class="dw-table-scroll">
+          <div class="dw-table-frame">
+            <table class="dw-table text-left">
+              <thead id="dc-thead"></thead>
+              <tbody id="dc-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </main>
@@ -1362,12 +1358,14 @@ body { background: #fff; color: #0F172A; }
             </div>
           </div>
         </div>
-        <aside id="gen-mapping-panel" class="w-[300px] shrink-0 bg-white border border-border rounded-2xl p-4 overflow-y-auto">
-          <h3 class="text-sm font-black text-dark mb-2">차트에 들어갈 열을 확인하세요</h3>
-          <p class="text-xs text-muted leading-relaxed font-semibold mb-4">X축은 기준이 되는 항목이고, Y축은 차트로 그릴 숫자 값입니다. 선택한 열은 표에서 색으로 표시됩니다.</p>
-          <div class="flex flex-wrap gap-2 mb-5">
-            <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">X축 선택 열</span>
-            <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-100">Y축 선택 열</span>
+        <aside id="gen-mapping-panel" class="w-[300px] shrink-0 bg-white border border-border rounded-2xl p-4 overflow-y-auto flex flex-col min-h-0">
+          <div>
+            <h3 class="text-sm font-black text-dark mb-2">차트에 들어갈 열을 확인하세요</h3>
+            <p class="text-xs text-muted leading-relaxed font-semibold mb-4">X축은 기준이 되는 항목이고, Y축은 차트로 그릴 숫자 값입니다. 선택한 열은 표에서 색으로 표시됩니다.</p>
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">X축 선택 열</span>
+              <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-100">Y축 선택 열</span>
+            </div>
           </div>
           <div id="gen-axis-normal" class="space-y-4">
             <div>
@@ -1387,7 +1385,7 @@ body { background: #fff; color: #0F172A; }
               <p class="text-[11px] text-slate-400 font-semibold mt-1.5">예: 매출액, 인원수, 점수</p>
             </div>
           </div>
-          <div class="mt-5 rounded-2xl border border-border bg-surface p-3">
+          <div class="mini-preview-card mt-auto rounded-2xl border border-border bg-surface p-3">
             <div class="text-xs font-black text-dark mb-2">실시간 미리보기</div>
             <canvas id="gen-mini-preview" class="w-full h-[150px] bg-white rounded-xl border border-border"></canvas>
           </div>
@@ -1555,10 +1553,6 @@ body { background: #fff; color: #0F172A; }
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <button onclick="saveCurrentProject()" class="bg-dark hover:bg-slate-800 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all shadow-sm flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-              저장
-            </button>
             <div class="relative">
               <button onclick="openExportMenu()" class="bg-white hover:bg-surface border border-border text-dark text-xs font-bold py-2 px-4 rounded-lg transition-all flex items-center gap-1.5">
                 내보내기
@@ -1649,12 +1643,12 @@ body { background: #fff; color: #0F172A; }
             <div class="acc-inner">
               <div class="flex items-center justify-between">
                 <label class="text-[11px] font-semibold text-dark">Top-N 표시</label>
-                <input type="number" id="prop-top-n" value="0" min="0"
+                <input type="number" id="prop-top-n" value="8" min="0"
                   oninput="updateChartProps()"
                   class="prop-inp w-16 text-center py-1"
                   placeholder="전체">
               </div>
-              <p class="text-[10px] text-muted leading-snug">0이면 전체 표시. 숫자를 입력하면 상위 N개만 표시합니다.</p>
+              <p class="text-[10px] text-muted leading-snug">기본값은 8개입니다. 0이면 전체 표시합니다.</p>
             </div>
           </div>
         </div>
@@ -1981,7 +1975,7 @@ body { background: #fff; color: #0F172A; }
   <div class="px-5 py-4 border-b border-border flex items-start justify-between gap-4">
     <div>
       <h3 class="text-base font-black text-dark">내보내기</h3>
-      <p class="text-xs text-muted font-semibold mt-1">HTML 프로토타입에서 실제 지원되는 형식과 정식 서비스 예정 기능을 구분했습니다.</p>
+      <p class="text-xs text-muted font-semibold mt-1">HTML 프로토타입에서 실제 지원되는 형식과 향후 고도화 버전 기능을 구분했습니다.</p>
     </div>
     <button onclick="closeExportMenu()" class="w-8 h-8 rounded-lg hover:bg-surface flex items-center justify-center text-muted hover:text-dark transition-colors" title="닫기">×</button>
   </div>
@@ -2033,9 +2027,9 @@ body { background: #fff; color: #0F172A; }
       <div class="flex gap-3">
         <div class="w-10 h-10 rounded-xl bg-surface text-muted flex items-center justify-center text-xs font-black shrink-0">SVG</div>
         <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1"><span class="text-sm font-black text-dark">SVG로 내보내기</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">정식 서비스 예정</span></div>
+          <div class="flex items-center gap-2 mb-1"><span class="text-sm font-black text-dark">SVG로 내보내기</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">고도화 버전 예정</span></div>
           <p class="text-xs text-muted font-semibold">벡터 그래픽 · 편집용</p>
-          <p class="text-[11px] text-slate-400 font-semibold mt-1">백엔드/프론트엔드 연동 후 제공 예정입니다.</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-1">향후 고도화 버전에서 제공 예정입니다.</p>
         </div>
       </div>
     </div>
@@ -2043,9 +2037,9 @@ body { background: #fff; color: #0F172A; }
       <div class="flex gap-3">
         <div class="w-10 h-10 rounded-xl bg-surface text-muted flex items-center justify-center text-xs font-black shrink-0">PPT</div>
         <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1"><span class="text-sm font-black text-dark">PPTX로 내보내기</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">정식 서비스 예정</span></div>
+          <div class="flex items-center gap-2 mb-1"><span class="text-sm font-black text-dark">PPTX로 내보내기</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">고도화 버전 예정</span></div>
           <p class="text-xs text-muted font-semibold">발표자료에 바로 넣기 좋은 파일</p>
-          <p class="text-[11px] text-slate-400 font-semibold mt-1">백엔드/프론트엔드 연동 후 제공 예정입니다.</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-1">향후 고도화 버전에서 제공 예정입니다.</p>
         </div>
       </div>
     </div>
@@ -2053,9 +2047,9 @@ body { background: #fff; color: #0F172A; }
       <div class="flex gap-3">
         <div class="w-10 h-10 rounded-xl bg-surface text-muted flex items-center justify-center text-xs font-black shrink-0">MP4</div>
         <div class="flex-1 min-w-0">
-          <div class="flex flex-wrap items-center gap-2 mb-1"><span class="text-sm font-black text-dark">MP4로 내보내기</span><span id="mp4-reco-badge" class="hide text-[10px] font-black text-white bg-primary px-2 py-0.5 rounded-full">정식 서비스 추천</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">정식 서비스 예정</span></div>
+          <div class="flex flex-wrap items-center gap-2 mb-1"><span class="text-sm font-black text-dark">MP4로 내보내기</span><span id="mp4-reco-badge" class="hide text-[10px] font-black text-white bg-primary px-2 py-0.5 rounded-full">고도화 버전 추천</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">고도화 버전 예정</span></div>
           <p class="text-xs text-muted font-semibold">레이싱 차트 등 애니메이션용</p>
-          <p class="text-[11px] text-slate-400 font-semibold mt-1">백엔드/프론트엔드 연동 후 제공 예정입니다.</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-1">향후 고도화 버전에서 제공 예정입니다.</p>
         </div>
       </div>
     </div>
@@ -2063,15 +2057,15 @@ body { background: #fff; color: #0F172A; }
       <div class="flex gap-3">
         <div class="w-10 h-10 rounded-xl bg-surface text-muted flex items-center justify-center text-xs font-black shrink-0">GIF</div>
         <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1"><span class="text-sm font-black text-dark">GIF로 내보내기</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">정식 서비스 예정</span></div>
+          <div class="flex items-center gap-2 mb-1"><span class="text-sm font-black text-dark">GIF로 내보내기</span><span class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">고도화 버전 예정</span></div>
           <p class="text-xs text-muted font-semibold">소리 없이 움직이는 이미지</p>
-          <p class="text-[11px] text-slate-400 font-semibold mt-1">백엔드/프론트엔드 연동 후 제공 예정입니다.</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-1">향후 고도화 버전에서 제공 예정입니다.</p>
         </div>
       </div>
     </div>
   </div>
   <div class="px-5 py-4 bg-indigo-50 border-t border-accent/15 text-[11px] leading-relaxed text-accent font-bold">
-    현재 HTML 프로토타입에서는 PNG, JPG, PDF 저장/인쇄를 지원합니다. SVG, PPTX, MP4, GIF는 MAC 정식 서비스에서 제공 예정입니다.
+    현재 HTML 프로토타입에서는 PNG, JPG, PDF 저장/인쇄를 지원합니다. SVG, PPTX, MP4, GIF는 향후 고도화 버전에서 제공 예정입니다.
   </div>
 </div>
 
@@ -2402,7 +2396,7 @@ function exportCurrentChart(format) {
     downloadCanvasAsImage(format, exportScale);
     return;
   }
-  showToast('이 형식은 MAC 정식 서비스에서 제공 예정입니다.', 'info');
+  showToast('이 형식은 향후 고도화 버전에서 제공 예정입니다.', 'info');
 }
 
 function downloadCanvasAsImage(format='png', scale=2) {
@@ -2493,7 +2487,7 @@ const chartProps = {
   theme: 'light',
   colorMode: 'solid',
   paletteColors: [],
-  topN: 0,
+  topN: 8,
   align: '기본',
   labelWidth: 20,
   barGap: 20,
@@ -2509,6 +2503,21 @@ const chartProps = {
   titleAlign: 'left',
   titleSize: 16
 };
+
+let hasInitializedTopNDefault = false;
+
+function ensureDefaultTopN() {
+  if (hasInitializedTopNDefault) return;
+  const next = parseInt(chartProps.topN, 10);
+  if (!Number.isFinite(next) || next <= 0) {
+    chartProps.topN = 8;
+  }
+  const topNEl = document.getElementById('prop-top-n');
+  if (topNEl && (!topNEl.value || parseInt(topNEl.value, 10) <= 0)) {
+    topNEl.value = chartProps.topN || 8;
+  }
+  hasInitializedTopNDefault = true;
+}
 
 function setChartTitleAlign(align, btn) {
   chartProps.titleAlign = align;
@@ -2548,6 +2557,7 @@ function updateChartProps() {
 
   // Redraw
   if(studioCurrentType) drawStudioChart(studioCurrentType, studioCurrentColor);
+  drawMiniPreview();
 }
 
 // ══════════════════════════════════
@@ -2798,6 +2808,7 @@ function escQ(s) { return (s||'').replace(/'/g,"&#39;").replace(/"/g,'&quot;'); 
 
 function studioSelectTemplate(chartType, title, desc) {
   studioCurrentType = chartType;
+  ensureDefaultTopN();
 
   // ── 축 선택기 전환: 워드 클라우드 ↔ 일반 차트 ──────────────────────
   const normalAxis = document.getElementById('gen-axis-normal');
@@ -4672,7 +4683,7 @@ function renderSpreadsheetTable(theadId, tbodyId, options={}) {
   const query = options.searchId ? (document.getElementById(options.searchId)?.value || '').trim() : '';
   let headHtml = '<tr><th class="dw-row-index">#</th>';
   genHeaders.forEach((header, cIdx) => {
-    headHtml += `<th class="min-w-[124px] ${axisHighlightClass(cIdx, context)}">
+    headHtml += `<th class="min-w-[108px] ${axisHighlightClass(cIdx, context)}">
       <div class="flex items-center gap-1 group">
         <span class="dw-col-badge ml-2">${columnBadge(cIdx)}</span>
         <input class="dw-head-input" value="${escHtml(header)}" onchange="updateGeneralHeader(${cIdx}, this.value, '${context}')">
@@ -4757,6 +4768,55 @@ function handleAxisChange() {
   drawMiniPreview();
 }
 
+function parseStrictChartNumber(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return null;
+  const cleaned = raw.replace(/,/g, '').replace(/%$/, '');
+  if (!/^-?\d+(\.\d+)?$/.test(cleaned)) return null;
+  const parsed = parseFloat(cleaned);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatMiniValue(value) {
+  const abs = Math.abs(value);
+  if (abs >= 1000) return Math.round(value).toLocaleString('ko-KR');
+  if (abs % 1 !== 0) return value.toFixed(abs < 10 ? 1 : 0);
+  return String(Math.round(value));
+}
+
+function truncateCanvasText(ctx, text, maxWidth) {
+  const source = String(text ?? '');
+  if (ctx.measureText(source).width <= maxWidth) return source;
+  let result = source;
+  while (result.length > 1 && ctx.measureText(result + '…').width > maxWidth) {
+    result = result.slice(0, -1);
+  }
+  return result + '…';
+}
+
+function getMiniPreviewItems(sortByValue=false) {
+  const { xIdx, yIdx } = getSelectedAxisIndices();
+  const limit = chartProps.topN > 0 ? Math.min(chartProps.topN, 5) : 5;
+  let items = genRows.map((row, idx) => {
+    const value = parseStrictChartNumber(row?.[yIdx]);
+    const label = String(row?.[xIdx] ?? '').trim() || `행 ${idx + 1}`;
+    return { label, value, rowIndex: idx };
+  }).filter(item => item.value !== null);
+  if (sortByValue) {
+    items = items.sort((a, b) => b.value - a.value);
+  }
+  return items.slice(0, limit);
+}
+
+function drawMiniPreviewEmpty(ctx, cssW, cssH) {
+  ctx.fillStyle = '#F8FAFC';
+  roundRect(ctx, 12, 30, cssW - 24, cssH - 46, 12);
+  ctx.fillStyle = '#94A3B8';
+  ctx.font = '800 12px Plus Jakarta Sans, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('미리보기에 사용할 숫자 열을 선택하세요.', cssW / 2, cssH / 2 + 4);
+}
+
 function drawMiniPreview() {
   const canvas = document.getElementById('gen-mini-preview');
   if (!canvas || selectedCategory !== 'custom') return;
@@ -4771,35 +4831,25 @@ function drawMiniPreview() {
   ctx.clearRect(0,0,cssW,cssH);
   ctx.fillStyle = '#fff';
   ctx.fillRect(0,0,cssW,cssH);
-  const dataset = getCurrentChartDataset();
-  if (!dataset.usable) {
-    ctx.fillStyle = '#94A3B8';
-    ctx.font = '700 12px Plus Jakarta Sans, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('미리보기에 사용할 숫자 열을 선택하세요.', cssW/2, cssH/2);
-    return;
-  }
-  const limit = chartProps.topN > 0 ? Math.min(chartProps.topN, 5) : 5;
-  const items = dataset.labels.map((label, i) => ({
-    label: String(label || `행 ${i + 1}`),
-    value: Math.max(0, Number(dataset.values[i]) || 0)
-  })).filter(item => item.value > 0).slice(0, limit);
-  if (!items.length) {
-    ctx.fillStyle = '#94A3B8';
-    ctx.font = '700 12px Plus Jakarta Sans, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('미리보기에 사용할 숫자 열을 선택하세요.', cssW/2, cssH/2);
-    return;
-  }
+  const type = studioCurrentType || 'bar';
+  const barLikeTypes = ['bar', 'racing', 'group', 'stacked'];
+  const sortByValue = barLikeTypes.includes(type) || type === 'pie' || type === 'donut';
+  let items = getMiniPreviewItems(sortByValue);
+  if ((type === 'pie' || type === 'donut')) items = items.filter(item => item.value > 0);
 
   ctx.fillStyle = '#0F172A';
   ctx.font = '900 11px Plus Jakarta Sans, sans-serif';
   ctx.textAlign = 'left';
-  ctx.fillText(chartTypeLabel(studioCurrentType || 'bar'), 12, 17);
+  ctx.fillText(chartTypeLabel(type), 12, 17);
 
-  if (studioCurrentType === 'pie' || studioCurrentType === 'donut') {
+  if (!items.length) {
+    drawMiniPreviewEmpty(ctx, cssW, cssH);
+    return;
+  }
+
+  if (type === 'pie' || type === 'donut') {
     const total = items.reduce((sum, item) => sum + item.value, 0) || 1;
-    const cx = cssW * 0.36, cy = cssH * 0.55, r = Math.min(cssW, cssH) * 0.27;
+    const cx = cssW * 0.33, cy = cssH * 0.57, r = Math.min(cssW, cssH) * 0.25;
     let angle = -Math.PI / 2;
     items.forEach((item, i) => {
       const sweep = (item.value / total) * Math.PI * 2;
@@ -4811,34 +4861,36 @@ function drawMiniPreview() {
       ctx.fill();
       angle += sweep;
     });
-    if (studioCurrentType === 'donut') {
+    if (type === 'donut') {
       ctx.beginPath();
       ctx.arc(cx, cy, r * .52, 0, Math.PI * 2);
       ctx.fillStyle = '#fff';
       ctx.fill();
     }
     items.forEach((item, i) => {
-      const y = 42 + i * 20;
+      const y = 40 + i * 19;
       ctx.fillStyle = ['#4F46E5','#FF6B35','#10B981','#38BDF8','#A78BFA'][i % 5];
       roundRect(ctx, cssW * .62, y - 8, 10, 10, 3);
       ctx.fillStyle = '#475569';
       ctx.font = '800 10px Plus Jakarta Sans, sans-serif';
       ctx.textAlign = 'left';
-      ctx.fillText(item.label.slice(0, 9), cssW * .62 + 16, y);
+      ctx.fillText(truncateCanvasText(ctx, item.label, cssW * .25), cssW * .62 + 16, y);
       ctx.textAlign = 'right';
       ctx.fillText(Math.round((item.value / total) * 100) + '%', cssW - 12, y);
     });
     return;
   }
 
-  if (studioCurrentType === 'line' || studioCurrentType === 'area') {
+  if (type === 'line' || type === 'area') {
     const pad = { l:18, r:12, t:34, b:20 };
     const w = cssW - pad.l - pad.r;
     const h = cssH - pad.t - pad.b;
+    const minVal = Math.min(...items.map(i => i.value), 0);
     const maxVal = Math.max(...items.map(i => i.value), 1);
+    const range = Math.max(1, maxVal - minVal);
     const points = items.map((item, i) => ({
       x: pad.l + (items.length === 1 ? w / 2 : i * (w / (items.length - 1))),
-      y: pad.t + h - (item.value / maxVal) * h,
+      y: pad.t + h - ((item.value - minVal) / range) * h,
       item
     }));
     ctx.strokeStyle = '#E2E8F0';
@@ -4847,7 +4899,7 @@ function drawMiniPreview() {
       const y = pad.t + h * (i / 2);
       ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + w, y); ctx.stroke();
     }
-    if (studioCurrentType === 'area') {
+    if (type === 'area') {
       ctx.beginPath();
       points.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
       ctx.lineTo(points[points.length - 1].x, pad.t + h);
@@ -4868,25 +4920,25 @@ function drawMiniPreview() {
     return;
   }
 
-  const maxVal = Math.max(...items.map(i => i.value), 1);
-  const labelW = Math.min(92, cssW * .34);
+  const maxVal = Math.max(...items.map(i => Math.abs(i.value)), 1);
+  const labelW = Math.min(104, cssW * .38);
   const barX = labelW + 14;
-  const barW = cssW - barX - 44;
-  const rowH = Math.min(22, (cssH - 36) / items.length);
+  const barW = Math.max(44, cssW - barX - 48);
+  const rowH = Math.min(22, (cssH - 38) / items.length);
   items.forEach((item, i) => {
-    const y = 34 + i * rowH;
+    const y = 35 + i * rowH;
     ctx.fillStyle = '#475569';
     ctx.font = '800 10.5px Plus Jakarta Sans, sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillText(item.label.slice(0, 12), labelW, y + 12);
+    ctx.fillText(truncateCanvasText(ctx, item.label, labelW - 4), labelW, y + 12);
     ctx.fillStyle = '#EEF2FF';
     roundRect(ctx, barX, y + 3, barW, 10, 5);
     ctx.fillStyle = '#4F46E5';
-    roundRect(ctx, barX, y + 3, Math.max(3, (item.value / maxVal) * barW), 10, 5);
+    roundRect(ctx, barX, y + 3, Math.max(3, (Math.abs(item.value) / maxVal) * barW), 10, 5);
     ctx.fillStyle = '#0F172A';
     ctx.font = '900 10px Plus Jakarta Sans, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(String(Math.round(item.value)), barX + barW + 8, y + 12);
+    ctx.fillText(formatMiniValue(item.value), barX + barW + 7, y + 12);
   });
 }
 
