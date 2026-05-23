@@ -587,6 +587,15 @@ body { background: #fff; color: #0F172A; }
     <div id="tab-gallery" class="dtab h-full flex flex-col hide overflow-y-auto pb-16">
       <div class="bg-white px-8 py-7 border-b border-border sticky top-0 z-10 shadow-sm">
         <div id="gallery-flow-progress" class="hide mb-5 rounded-2xl border border-border bg-surface px-4 py-3"></div>
+        <!-- 갤러리 뒤로가기: Studio에서 온 경우에만 표시 -->
+        <div id="gallery-back-row" class="hide mb-4 flex items-center gap-3">
+          <button onclick="galleryBackToEditor()"
+            class="flex items-center gap-2 text-sm font-semibold text-muted hover:text-dark transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            데이터 선택으로 돌아가기
+          </button>
+          <span class="text-xs text-muted font-medium bg-surface border border-border px-2 py-0.5 rounded-full">Chart Studio → 차트 갤러리</span>
+        </div>
         <h1 class="text-2xl font-extrabold text-dark mb-2">차트 갤러리</h1>
         <p class="text-muted text-sm mb-6 font-medium">데이터 목적에 맞는 완벽한 차트 유형을 선택하세요.</p>
         <div class="flex gap-2 overflow-x-auto pb-1">
@@ -1223,16 +1232,26 @@ body { background: #fff; color: #0F172A; }
 <section id="page-data-editor" class="page min-h-full flex flex-col bg-white hide">
   <div class="h-14 bg-white border-b border-border flex items-center justify-between px-6">
     <div class="flex items-center gap-4">
-      <button onclick="selectedCategory==='custom' ? go('new-viz') : go('data-type')" class="text-muted hover:text-dark">
+      <button onclick="handleEditorBack()" class="text-muted hover:text-dark">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
       </button>
       <span class="text-sm font-extrabold text-dark">새 시각화 만들기</span>
     </div>
     <div id="progress-data-editor" class="create-flow-progress"></div>
-    <button onclick="saveCurrentProject()" class="bg-dark text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-slate-800 transition-colors">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-      저장
-    </button>
+    <div class="flex items-center gap-2">
+      <!-- ── Fix 4: 내보내기 버튼을 저장 버튼 옆으로 이동 ── -->
+      <div class="relative">
+        <button onclick="openExportMenu()" class="bg-white hover:bg-surface border border-border text-dark text-sm font-bold py-2 px-4 rounded-lg transition-all flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          내보내기
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+      </div>
+      <button onclick="saveCurrentProject()" class="bg-dark text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-slate-800 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+        저장
+      </button>
+    </div>
   </div>
 
   <div class="flex border-b border-border bg-white px-6">
@@ -1491,6 +1510,11 @@ body { background: #fff; color: #0F172A; }
             <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
             자동 저장 중
           </span>
+          <!-- Fix 4: 대시보드 저장 버튼 추가 -->
+          <button onclick="saveCurrentProject()" class="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold bg-dark text-white hover:bg-slate-700 rounded-lg transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+            저장
+          </button>
           <button onclick="clearDashboard()" class="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-muted hover:text-red-500 hover:bg-red-50 rounded-lg transition-all border border-transparent hover:border-red-100">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             초기화
@@ -1498,18 +1522,18 @@ body { background: #fff; color: #0F172A; }
         </div>
       </div>
       <!-- Free-form canvas -->
-      <div id="dashboard-canvas" class="flex-1 overflow-auto p-5">
-        <div id="dashboard-board" style="position:relative; min-width:1600px; min-height:1000px;">
-          <!-- Empty state -->
-          <div id="dash-empty" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="text-center">
-              <div class="w-20 h-20 bg-white rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center mx-auto mb-5 shadow-sm">
-                <svg class="w-9 h-9 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-              </div>
-              <p class="text-sm font-extrabold text-slate-400 mb-1.5">대시보드가 비어있습니다</p>
-              <p class="text-xs text-slate-300 font-medium">우측 패널에서 차트를 클릭해 추가하거나<br>Chart Studio에서 '대시보드에 추가'를 누르세요</p>
+      <div id="dashboard-canvas" class="flex-1 overflow-auto p-5 relative">
+        <!-- Fix 3: 빈 상태 문구를 캔버스 뷰포트 기준 중앙에 배치 -->
+        <div id="dash-empty" class="absolute inset-0 flex items-center justify-center pointer-events-none" style="position:sticky;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+          <div class="text-center">
+            <div class="w-20 h-20 bg-white rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center mx-auto mb-5 shadow-sm">
+              <svg class="w-9 h-9 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
             </div>
+            <p class="text-sm font-extrabold text-slate-400 mb-1.5">대시보드가 비어있습니다</p>
+            <p class="text-xs text-slate-300 font-medium">우측 패널에서 차트를 클릭해 추가하거나<br>Chart Studio에서 '대시보드에 추가'를 누르세요</p>
           </div>
+        </div>
+        <div id="dashboard-board" style="position:relative; min-width:1600px; min-height:1000px;">
         </div>
       </div>
     </div>
@@ -1557,12 +1581,7 @@ body { background: #fff; color: #0F172A; }
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <div class="relative">
-              <button onclick="openExportMenu()" class="bg-white hover:bg-surface border border-border text-dark text-xs font-bold py-2 px-4 rounded-lg transition-all flex items-center gap-1.5">
-                내보내기
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-              </button>
-            </div>
+            <!-- export button moved to main header -->
             <button onclick="addChartToDashboard()" class="bg-accent hover:bg-indigo-700 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all shadow-sm flex items-center gap-1.5">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
               대시보드에 추가
@@ -1712,7 +1731,6 @@ body { background: #fff; color: #0F172A; }
                 <div id="palette-color-section" class="hide">
                   <label class="text-[11px] font-semibold text-dark mb-1.5 block">팔레트</label>
                   <div style="position:relative">
-                    <!-- Trigger: full-width color strip -->
                     <button type="button" id="palette-trigger"
                       onclick="togglePaletteDropdown()"
                       style="width:100%;height:36px;border-radius:8px;overflow:hidden;position:relative;border:1.5px solid #E2E8F0;cursor:pointer;display:block">
@@ -1732,7 +1750,6 @@ body { background: #fff; color: #0F172A; }
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                       </svg>
                     </button>
-                    <!-- Dropdown injected to body by JS to escape overflow:hidden -->
                   </div>
                 </div>
               </div>
@@ -2199,6 +2216,12 @@ function syncProjectTitleInput() {
 function resetProjectIdentity(title='제목 없는 시각화') {
   currentProjectId = null;
   currentProjectTitle = title;
+  // 새 프로젝트: 이전 차트 제목 초기화
+  chartProps.chartTitle = '';
+  const titleEl = document.getElementById('prop-chart-title');
+  if (titleEl) titleEl.value = '';
+  // ── Fix 1: 새 프로젝트 생성 시 대시보드도 비우기 (수동 추가 전까지 비어있어야 함) ──
+  dashboardCharts = [];
   syncProjectTitleInput();
   saveWorkspace();
 }
@@ -2974,7 +2997,7 @@ function renderDashboardCharts() {
   if (countEl) countEl.textContent = `차트 ${dashboardCharts.length}개`;
 
   if (dashboardCharts.length === 0) {
-    if (empty) empty.style.display = '';
+    if (empty) empty.style.display = 'flex';
     renderDashAddPanel();
     return;
   }
@@ -3094,7 +3117,7 @@ function removeFromDashboard(chartId) {
   const countEl = document.getElementById('dash-chart-count');
   if (countEl) countEl.textContent = `차트 ${dashboardCharts.length}개`;
   const empty = document.getElementById('dash-empty');
-  if (empty) empty.style.display = dashboardCharts.length === 0 ? '' : 'none';
+  if (empty) empty.style.display = dashboardCharts.length === 0 ? 'flex' : 'none';
   saveWorkspace();
 }
 
@@ -3463,6 +3486,7 @@ function goToGalleryForChartChange() {
   // pendingCSVData는 genRows 데이터를 다시 설정하지 않도록 null 유지
   // 갤러리에서 차트 선택 → useChart() → go('data-editor') 시
   // genRows가 그대로 유지되므로 데이터 유실 없음
+  window.galleryFromStudio = true;
   go('dashboard', 'gallery');
 }
 
@@ -3504,6 +3528,7 @@ function useChart() {
   studioCurrentColor = currentChartColor;
   // 갤러리에서 시작 → 항상 custom 모드
   selectedCategory = 'custom';
+  window.galleryFromStudio = false; // 갤러리 뒤로가기 버튼 숨기기
   go('data-editor');
   setTimeout(()=>{
     studioSelectTemplate(currentChartType, currentChartTitle, currentChartDesc);
@@ -3571,7 +3596,19 @@ function drawChart(type, color, canvasEl) {
   }
 
   // Formatting & Helpers
-  const fmt = (v) => Number(v).toFixed(chartProps.labelDecimals);
+  // ── Fix 3: 큰 숫자를 K/M/B/T 약어로 표시해 축 레이블 잘림 방지 ──
+  function fmtShort(v) {
+    const n = Number(v);
+    if (!isFinite(n)) return String(v);
+    const abs = Math.abs(n);
+    const sign = n < 0 ? '-' : '';
+    if (abs >= 1e12) return sign + (abs / 1e12).toFixed(1).replace(/\.0$/, '') + 'T';
+    if (abs >= 1e9)  return sign + (abs / 1e9 ).toFixed(1).replace(/\.0$/, '') + 'B';
+    if (abs >= 1e6)  return sign + (abs / 1e6 ).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (abs >= 1e3)  return sign + (abs / 1e3 ).toFixed(1).replace(/\.0$/, '') + 'K';
+    return sign + abs.toFixed(chartProps.labelDecimals);
+  }
+  const fmt = (v) => fmtShort(v);
 
   function gridLines(x0,y0,x1,y1,steps) {
     ctx.strokeStyle = gridColor;
@@ -3591,37 +3628,88 @@ function drawChart(type, color, canvasEl) {
   }
 
   // Adjust padding by Label Width (left padding increases with label width slider)
-  let padL = 30 + (W * (chartProps.labelWidth / 100) * 0.5); 
+  let padL = 30 + (W * (chartProps.labelWidth / 100) * 0.5);
+  // ── Fix 3b: 큰 숫자 Y축 레이블이 잘리지 않도록 padL 동적 조정 ──
+  {
+    const _cData = buildCurrentChartData({ type, fallbackToSample: selectedCategory !== 'custom' });
+    if (_cData && _cData.values && _cData.values.length > 0) {
+      const _max = Math.max(1, ..._cData.values, ..._cData.values2, ..._cData.values3, ...(_cData.values4 || []));
+      ctx.font = `500 ${chartProps.labelSize}px ${chartProps.fontFamily}, sans-serif`;
+      const sampleLabel = fmtShort(_max);
+      const labelW = ctx.measureText(sampleLabel).width + 14;
+      if (labelW > padL) padL = Math.min(labelW + 10, W * 0.3);
+    }
+  }
   let padT = 50;
 
   // Draw Title
   if (chartProps.chartTitle) {
-    ctx.font = `800 ${chartProps.titleSize}px ${chartProps.fontFamily}, sans-serif`;
+    const tSize = Math.max(8, chartProps.titleSize || 16);
+    // ── Fix 2: y 좌표를 폰트 크기에 맞게 동적 계산, 클리핑 방지 ──
+    const titleAreaH = Math.max(44, tSize + 20);
+    const ty = Math.round(tSize * 0.88) + Math.max(0, Math.floor((titleAreaH - tSize) / 2));
+    ctx.font = `800 ${tSize}px ${chartProps.fontFamily}, sans-serif`;
     ctx.fillStyle = textColor;
     ctx.textAlign = chartProps.titleAlign;
+    ctx.textBaseline = 'alphabetic';
     let tx = chartProps.titleAlign === 'center' ? W/2 : (chartProps.titleAlign === 'right' ? W-40 : padL);
-    ctx.fillText(chartProps.chartTitle, tx, 40);
-    padT += 40;
+    // clip long titles
+    const maxW = W - padL - 40;
+    let titleText = chartProps.chartTitle;
+    if (ctx.measureText(titleText).width > maxW) {
+      while (titleText.length > 1 && ctx.measureText(titleText + '…').width > maxW) {
+        titleText = titleText.slice(0, -1);
+      }
+      titleText += '…';
+    }
+    ctx.fillText(titleText, tx, ty);
+    padT = titleAreaH + 10;
   }
 
-  const pad = {t:padT, r:40, b:60, l:padL};
+  // ── Fix 1: 범례 하단 중앙 정렬 – 먼저 수집 후 일괄 렌더 ──
+  const _legendBottomPad = chartProps.legendShow ? 52 : 40;
+  const pad = {t:padT, r:40, b:_legendBottomPad, l:padL};
   const cW = W - pad.l - pad.r;
   const cH = H - pad.t - pad.b;
   const max = Math.max(1, ...cData.values, ...cData.values2, ...cData.values3, ...(cData.values4 || [])) * 1.15;
 
-  let legendX = pad.l;
+  // Collect legend entries; flush at the end of each chart type
+  const _legendQueue = [];
   function drawLegendDynamic(text, col) {
     if (!chartProps.legendShow) return;
-    ctx.fillStyle = col; 
-    ctx.beginPath(); ctx.roundRect(legendX, pad.t - 30, 12, 12, 3); ctx.fill();
+    _legendQueue.push({ text, col });
+  }
+  function flushLegend() {
+    if (!chartProps.legendShow || _legendQueue.length === 0) return;
     const isBold = chartProps.legendBold;
-    ctx.font = `${isBold ? '800' : '500'} ${chartProps.legendSize}px ${chartProps.fontFamily}, sans-serif`;
-    ctx.fillStyle = mutedColor;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, legendX + 18, pad.t - 24);
-    ctx.textBaseline = 'alphabetic'; // reset
-    legendX += ctx.measureText(text).width + 36;
+    const lSize  = chartProps.legendSize;
+    ctx.font = `${isBold ? '800' : '500'} ${lSize}px ${chartProps.fontFamily}, sans-serif`;
+    // Measure widths: icon(12) + gap(6) + text + spacing(20)
+    const itemWidths = _legendQueue.map(item => {
+      ctx.font = `${isBold ? '800' : '500'} ${lSize}px ${chartProps.fontFamily}, sans-serif`;
+      return 12 + 6 + ctx.measureText(item.text).width + 20;
+    });
+    const totalW = itemWidths.reduce((a, b) => a + b, 0) - 20;
+    // Clamp to canvas width with side padding
+    const maxTotalW = W - 40;
+    const scale = totalW > maxTotalW ? maxTotalW / totalW : 1;
+    const scaledWidths = itemWidths.map(w => w * scale);
+    const scaledTotal = scaledWidths.reduce((a, b) => a + b, 0) - 20 * scale;
+    let lx = Math.round(W / 2 - scaledTotal / 2);
+    const ly = H - Math.round(_legendBottomPad / 2) + 2; // vertically centered in bottom pad
+    _legendQueue.forEach((item, i) => {
+      ctx.fillStyle = item.col;
+      ctx.beginPath(); ctx.roundRect(lx, ly - 6, 12, 12, 3); ctx.fill();
+      const fSize = Math.round(lSize * scale);
+      ctx.font = `${isBold ? '800' : '500'} ${Math.max(8, fSize)}px ${chartProps.fontFamily}, sans-serif`;
+      ctx.fillStyle = mutedColor;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(item.text, lx + 18, ly);
+      ctx.textBaseline = 'alphabetic';
+      lx += Math.round(scaledWidths[i]);
+    });
+    _legendQueue.length = 0;
   }
 
   if (type === 'bar') {
@@ -3861,6 +3949,7 @@ function drawChart(type, color, canvasEl) {
     for(let i=0;i<=5;i++){ label(Math.round(max/5*i), pad.l-10, pad.t+cH-cH/5*i+4, 'right'); }
     drawLegendDynamic('시리즈 A', pColor(0));
     drawLegendDynamic('시리즈 B', pColor(1));
+    flushLegend();
   }
   else if (type === 'stacked') {
     gridLines(pad.l, pad.t, pad.l+cW, pad.t, 5);
@@ -3913,7 +4002,7 @@ function drawChart(type, color, canvasEl) {
       drawLegendDynamic(lbl, color);
     };
 
-    legendX = pad.l;
+    legendX = pad.l; // legacy reset - no-op now
     drawSpline(cData.values, pColor(0), 'Column 1');
     drawSpline(cData.values2, '#38BDF8', 'Column 2');
     drawSpline(cData.values3, '#A855F7', 'Column 3');
@@ -3921,6 +4010,7 @@ function drawChart(type, color, canvasEl) {
     
     xs.forEach((x,i)=>{ label(cData.labels[i], x, pad.t+cH+20, 'center'); });
     for(let i=0;i<=5;i++){ label(Math.round(max/5*i), pad.l-10, pad.t+cH-cH/5*i+4, 'right'); }
+    flushLegend();
   }
   else if (type === 'area') {
     gridLines(pad.l, pad.t, pad.l+cW, pad.t+cH, 5);
@@ -3983,9 +4073,9 @@ function drawChart(type, color, canvasEl) {
       label(fmt(total), cx, cy+16, 'center', chartProps.labelSize+4, textColor, true);
     }
     sliceData.forEach((v,i)=>{
-      const lx = W-120, ly = 60+i*28;
       drawLegendDynamic(labels2[i]+' '+Math.round((v/total)*100)+'%', colors[i%colors.length]);
     });
+    flushLegend();
   }
   else if (type === 'word') {
     const wColors = [pColor(0),pColor(1),pColor(2),pColor(3),pColor(4),pColor(5),pColor(6)];
@@ -4166,11 +4256,41 @@ function renderGallery() {
   `).join('');
 }
 
+// ── 뒤로가기 흐름: Chart Studio → 갤러리 → 데이터 선택 ──────────────
+window._activeEditorTab = 'raw';
+window.galleryFromStudio = false;
+
+function handleEditorBack() {
+  if (window._activeEditorTab === 'studio') {
+    // Chart Studio에서 뒤로 → 차트 갤러리
+    window.galleryFromStudio = true;
+    window.isInCreateFlow = true;
+    go('dashboard', 'gallery');
+  } else {
+    // 그 외 탭 → 기존 흐름
+    selectedCategory === 'custom' ? go('new-viz') : go('data-type');
+  }
+}
+
+function galleryBackToEditor() {
+  // 갤러리에서 뒤로 → 데이터 선택 화면(원본 데이터 탭)
+  window.galleryFromStudio = false;
+  go('data-editor');
+  requestAnimationFrame(() => {
+    const rawBtn = document.querySelectorAll('.tab-btn')[0];
+    switchEditorTab('raw', rawBtn);
+  });
+}
+
 function renderGalleryFlowProgress() {
   const el = document.getElementById('gallery-flow-progress');
   if (!el) return;
   el.classList.toggle('hide', !window.isInCreateFlow);
   if (window.isInCreateFlow) el.innerHTML = createFlowProgressHtml(3);
+
+  // 갤러리 뒤로가기 버튼: Studio에서 온 경우에만 표시
+  const backRow = document.getElementById('gallery-back-row');
+  if (backRow) backRow.classList.toggle('hide', !window.galleryFromStudio);
 }
 
 function createFlowProgressHtml(activeStep) {
@@ -4284,11 +4404,27 @@ document.addEventListener('click', e => {
       btn.classList.add('active');
     }
   }
+  // 팔레트 드롭다운: 섹션 또는 드롭다운 자체 클릭이면 유지, 외부면 닫기
+  // 드래그 직후(mouseup → click 순서)에는 닫지 않음
   const dropdown = document.getElementById('palette-dropdown');
-  if (dropdown && !e.target.closest('#palette-color-section')) {
-    dropdown.style.display = 'none';
+  if (dropdown && dropdown.style.display === 'block') {
+    if (!window._paletteDragJustEnded
+        && !e.target.closest('#palette-color-section')
+        && !dropdown.contains(e.target)) {
+      _closePaletteDropdown();
+    }
   }
 });
+
+// 페이지/패널이 스크롤될 때 드롭다운 닫기
+// 단, 드롭다운 자체(dd.scrollTop 변경)가 발생시킨 scroll은 무시
+document.addEventListener('scroll', (e) => {
+  const dd = document.getElementById('palette-dropdown');
+  if (!dd || dd.style.display !== 'block') return;
+  // 드롭다운 안에서 발생한 scroll이면 닫지 않음
+  if (dd === e.target || dd.contains(e.target)) return;
+  _closePaletteDropdown();
+}, true);
 
 function toggleAcc(id) {
   const body  = document.getElementById(id);
@@ -4364,29 +4500,112 @@ function updatePaletteTrigger(idx) {
 }
 
 function togglePaletteDropdown() {
-  // Ensure dropdown lives at body level to escape overflow:hidden ancestors
   let dd = document.getElementById('palette-dropdown');
   if (!dd) {
     dd = document.createElement('div');
     dd.id = 'palette-dropdown';
-    dd.style.cssText = 'display:none;position:fixed;background:#fff;border:1.5px solid #E2E8F0;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.15);z-index:9999;max-height:300px;overflow-y:auto';
+    dd.style.cssText = [
+      'display:none',
+      'position:fixed',
+      'background:#fff',
+      'border:1.5px solid #E2E8F0',
+      'border-radius:10px',
+      'box-shadow:0 8px 32px rgba(0,0,0,.16)',
+      'z-index:99999',
+      'overflow-y:auto',          /* 스크롤 가능 */
+      'overflow-x:hidden',
+      'min-width:200px',
+      'cursor:grab',              /* 드래그 스크롤 커서 힌트 */
+      'user-select:none',
+    ].join(';');
     document.body.appendChild(dd);
+    _attachPaletteDragScroll(dd);  /* 드래그 스크롤 이벤트 연결 */
   }
-  const trigger = document.getElementById('palette-trigger');
+
   const isVisible = dd.style.display === 'block';
   if (isVisible) {
-    dd.style.display = 'none';
-  } else {
-    if (trigger) {
-      const r = trigger.getBoundingClientRect();
-      dd.style.left   = r.left + 'px';
-      dd.style.top    = (r.bottom + 4) + 'px';
-      dd.style.width  = r.width + 'px';
-      dd.style.right  = 'auto';
-    }
-    dd.style.display = 'block';
-    renderPaletteDropdown();
+    _closePaletteDropdown();
+    return;
   }
+
+  renderPaletteDropdown();
+
+  const trigger = document.getElementById('palette-trigger');
+  if (trigger) {
+    const r  = trigger.getBoundingClientRect();
+    const vH = window.innerHeight;
+    const vW = window.innerWidth;
+    const w  = Math.max(r.width, 210);
+
+    /* 아래 공간이 충분하면 아래로, 아니면 위로 */
+    const spaceBelow = vH - r.bottom - 6;
+    const spaceAbove = r.top - 6;
+    const maxH = Math.min(480, Math.max(spaceBelow, spaceAbove) - 6);
+
+    dd.style.width    = w + 'px';
+    dd.style.maxHeight = maxH + 'px';
+
+    if (spaceBelow >= 160 || spaceBelow >= spaceAbove) {
+      dd.style.top    = (r.bottom + 4) + 'px';
+      dd.style.bottom = 'auto';
+    } else {
+      dd.style.bottom = (vH - r.top + 4) + 'px';
+      dd.style.top    = 'auto';
+    }
+    const left = Math.min(r.left, vW - w - 8);
+    dd.style.left  = Math.max(4, left) + 'px';
+    dd.style.right = 'auto';
+  }
+  dd.scrollTop = 0;
+  dd.style.display = 'block';
+}
+
+function _closePaletteDropdown() {
+  const dd = document.getElementById('palette-dropdown');
+  if (dd) dd.style.display = 'none';
+}
+
+/* ── 드래그 스크롤: mousedown + mousemove 로 scrollTop 조작 ── */
+window._paletteDragJustEnded = false;   // 드래그 직후 click 오닫힘 방지 플래그
+
+function _attachPaletteDragScroll(dd) {
+  let startY = 0, startScrollTop = 0, dragging = false, hasMoved = false;
+
+  dd.addEventListener('mousedown', e => {
+    startY         = e.clientY;
+    startScrollTop = dd.scrollTop;
+    dragging       = true;
+    hasMoved       = false;
+    dd.style.cursor = 'grabbing';
+    e.preventDefault();   // 텍스트 선택 방지
+    e.stopPropagation();  // 트리거 onclick 중복 방지
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const dy = e.clientY - startY;
+    if (Math.abs(dy) > 3) {
+      hasMoved = true;
+      dd.scrollTop = startScrollTop - dy;
+    }
+  });
+
+  document.addEventListener('mouseup', e => {
+    if (!dragging) return;
+    dragging = false;
+    dd.style.cursor = 'grab';
+
+    if (hasMoved) {
+      // 드래그가 실제로 있었을 때:
+      // click 이벤트가 바깥 요소에서 발생해 dropdown을 닫지 못하게 플래그 설정
+      window._paletteDragJustEnded = true;
+      // click 이벤트는 같은 이벤트 큐에서 mouseup 직후 발생하므로
+      // requestAnimationFrame 이전에 처리된다 → 플래그가 살아있는 동안 닫기 차단
+      requestAnimationFrame(() => {
+        window._paletteDragJustEnded = false;
+      });
+    }
+  });
 }
 
 function selectPaletteByIdx(idx) {
@@ -4394,17 +4613,7 @@ function selectPaletteByIdx(idx) {
   if (!p) return;
   chartProps.paletteColors = p.colors;
   updatePaletteTrigger(idx);
-  document.getElementById('palette-dropdown').style.display = 'none';
-  if (studioCurrentType) drawStudioChart(studioCurrentType, studioCurrentColor);
-  drawMiniPreview();
-  drawMiniPreviewOverlayIfOpen();
-}
-
-function selectPalette(name, c1, c2, c3) {
-  // legacy shim (modal color buttons)
-  const idx = PALETTES.findIndex(p => p.name === name);
-  if (idx >= 0) { selectPaletteByIdx(idx); return; }
-  chartProps.paletteColors = [c1, c2, c3];
+  _closePaletteDropdown();
   if (studioCurrentType) drawStudioChart(studioCurrentType, studioCurrentColor);
   drawMiniPreview();
   drawMiniPreviewOverlayIfOpen();
@@ -5547,9 +5756,12 @@ function syncGeneralDataToChart() {
 // Routing
 // ══════════════════════════════════
 function go(pageId, tabId=null) {
-  // ── 팔레트 드롭다운: 화면 이동 시 항상 닫기 (z-9999로 클릭 차단 방지) ──
-  const _pd = document.getElementById('palette-dropdown');
-  if (_pd) _pd.style.display = 'none';
+  // ── Fix 2: 화면 이동 시 팔레트 드롭다운 닫기 ──
+  if (typeof _closePaletteDropdown === 'function') _closePaletteDropdown();
+  else {
+    const _pd = document.getElementById('palette-dropdown');
+    if (_pd) _pd.style.display = 'none';
+  }
 
   // new-viz로 돌아갈 때 업로드 존 리셋
   if (pageId === 'new-viz') {
@@ -5630,12 +5842,20 @@ function switchTab(tabId) {
   if(tabId==='templates') {
     renderCategoryGrid('category-grid', false);
   }
-  if(tabId==='projects') renderProjectsList();
-  if(tabId==='gallery') renderGallery();
+  // 갤러리를 내비게이션으로 직접 진입한 경우 Studio 플래그 해제
+  if(tabId==='gallery') {
+    // galleryFromStudio가 true이면 이미 Studio 뒤로가기로 온 것이므로 유지
+    // window.isInCreateFlow=false로 온 경우만 플래그 초기화
+    if(!window.isInCreateFlow) window.galleryFromStudio = false;
+    renderGallery();
+    renderGalleryFlowProgress();
+  }
   else renderGalleryFlowProgress();
+  if(tabId==='projects') renderProjectsList();
 }
 
 function switchEditorTab(tab, btn) {
+  window._activeEditorTab = tab; // 현재 탭 추적
   ['raw','dashboard','studio'].forEach(t=>{
     document.getElementById('editor-'+t).classList.add('hide');
   });
