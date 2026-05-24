@@ -74,8 +74,12 @@ body { background: #fff; color: #0F172A; }
 .step-line { flex:1; height:1px; background:#E2E8F0; }
 
 /* upload zone */
-.upload-zone { border:2px dashed #CBD5E1; border-radius:16px; transition:all .2s; }
+.upload-zone { border:2px dashed #CBD5E1; border-radius:16px; transition:all .2s; cursor:pointer; }
 .upload-zone:hover { border-color:#4F46E5; background:#F5F3FF; }
+/* 업로드 존 내부 모든 자식 요소도 pointer 커서 상속 */
+.upload-zone *, #nviz-drop *, #gen-upload-zone * { cursor:pointer !important; }
+#nviz-drop { cursor:pointer !important; }
+#gen-upload-zone { cursor:pointer !important; }
 
 /* template icon bg */
 .tpl-icon { width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; }
@@ -206,7 +210,57 @@ body { background: #fff; color: #0F172A; }
   to   { opacity:1; transform:translateY(0);    background:transparent; }
 }
 
-/* ── Power BI-style dashboard widgets ── */
+/* ══════════════════════════════════════════════════════
+   Flourish Racing Chart DOM styles (ported from App.jsx)
+══════════════════════════════════════════════════════ */
+/* ── Racing speed bar ── */
+#racing-speed-bar.show { display:flex; }
+.rc-spd-btn { height:22px; padding:0 9px; border-radius:6px; border:1px solid #E2E8F0; background:#fff; font-size:11px; font-weight:700; color:#64748B; cursor:pointer; transition:all .15s; }
+.rc-spd-btn:hover { border-color:#4F46E5; color:#4F46E5; }
+.rc-spd-btn.active-spd { background:#EEF2FF; border-color:#C7D2FE; color:#4F46E5; }
+.rc-wrap{display:flex;flex-direction:column;width:100%;height:100%;padding:14px 16px 8px;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden;position:relative;}
+.rc-title{font-size:20px;font-weight:800;color:#111827;margin-bottom:4px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;}
+/* Axis */
+.rc-axis{display:flex;align-items:flex-end;height:38px;margin-bottom:4px;flex-shrink:0;}
+.rc-axis-spacer{flex-shrink:0;}
+.rc-axis-area{position:relative;flex:1;height:38px;}
+.rc-axis-line{position:absolute;left:0;right:0;top:22px;height:1.5px;background:rgba(0,0,0,0.28);}
+.rc-axis-tick{position:absolute;top:0;width:1px;height:100%;pointer-events:none;}
+.rc-axis-grid{position:absolute;top:22px;width:1px;background:rgba(0,0,0,0.10);}
+.rc-axis-lbl{position:absolute;top:2px;font-size:11.5px;color:#374151;opacity:.9;font-variant-numeric:tabular-nums;white-space:nowrap;}
+/* Plot — flex:1 so it fills remaining height */
+.rc-plot{position:relative;flex:1;min-height:0;padding-top:6px;overflow:hidden;}
+/* Bar rows */
+.rc-bar-row{position:absolute;left:0;right:0;display:flex;align-items:center;gap:10px;will-change:transform,opacity;transition:opacity 220ms ease;}
+.rc-bar-label{font-size:13px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;flex-shrink:0;padding-right:2px;}
+.rc-bar-track{position:relative;flex:1;border-radius:2px;}
+.rc-bar-fill{position:absolute;left:0;top:0;height:100%;border-radius:2px;transition:width 90ms linear;overflow:visible;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);}
+.rc-bar-value{position:absolute;right:-8px;top:50%;transform:translate(100%,-50%);color:#374151;font-size:12px;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;pointer-events:none;}
+/* Big time */
+.rc-bigtime{position:absolute;right:18px;bottom:78px;text-align:right;pointer-events:none;z-index:0;}
+.rc-bigtime-year{font-size:clamp(48px,7vw,90px);font-weight:800;color:rgba(15,23,42,.10);line-height:1;letter-spacing:.01em;}
+.rc-bigtime-total{margin-top:4px;color:#374151;opacity:.5;font-size:14px;font-variant-numeric:tabular-nums;}
+/* Timeline — absolute at bottom of container */
+.rc-timeline{position:absolute;left:12px;right:12px;bottom:10px;display:flex;align-items:center;gap:10px;z-index:10;}
+.rc-play-btn{width:36px;height:36px;border-radius:999px;border:0;background:rgba(15,23,42,.82);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:13px;font-weight:900;flex-shrink:0;transition:background .15s;}
+.rc-play-btn:hover{background:#111;}
+.rc-track-wrap{position:relative;flex:1;height:52px;}
+.rc-track-line{position:absolute;left:0;right:0;top:18px;height:2px;background:rgba(0,0,0,.25);border-radius:2px;}
+.rc-track-progress{position:absolute;left:0;top:18px;height:2px;background:#4F46E5;border-radius:2px;pointer-events:none;}
+.rc-tick{position:absolute;top:0;transform:translateX(-50%);pointer-events:none;}
+.rc-tick-line{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:1px;height:7px;background:rgba(0,0,0,.25);}
+.rc-tick-lbl{position:absolute;top:27px;left:50%;transform:translateX(-50%);font-size:10px;color:#374151;opacity:.6;white-space:nowrap;}
+.rc-handle{position:absolute;top:14px;width:0;height:0;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid rgba(15,23,42,.55);}
+.rc-range{position:absolute;left:0;right:0;top:4px;height:36px;opacity:0;cursor:pointer;width:100%;}
+/* Dark */
+.rc-dark .rc-axis-line,.rc-dark .rc-track-line,.rc-dark .rc-tick-line{background:rgba(255,255,255,.3);}
+.rc-dark .rc-axis-grid{background:rgba(255,255,255,.12);}
+.rc-dark .rc-axis-lbl,.rc-dark .rc-bar-label,.rc-dark .rc-bar-value,.rc-dark .rc-tick-lbl{color:#d1d5db;}
+.rc-dark .rc-bigtime-year{color:rgba(255,255,255,.15);}
+.rc-dark .rc-bigtime-total{color:#d1d5db;}
+.rc-dark .rc-play-btn{background:rgba(255,255,255,.85);color:#111;}
+.rc-dark .rc-handle{border-top-color:rgba(255,255,255,.65);}
+.rc-dark .rc-track-progress{background:#818cf8;}
 .db-widget { position:absolute; background:#fff; border:1.5px solid #E2E8F0; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.06); transition:box-shadow .15s,border-color .15s; }
 .db-widget:hover { box-shadow:0 6px 20px rgba(0,0,0,.1); border-color:#CBD5E1; }
 .db-widget.db-dragging { box-shadow:0 16px 40px rgba(79,70,229,.18); border-color:#4F46E5; opacity:.93; z-index:100 !important; }
@@ -1581,6 +1635,13 @@ body { background: #fff; color: #0F172A; }
             </div>
           </div>
           <div class="flex items-center gap-3">
+            <!-- ── 레이싱 차트 전용 속도 조절 (racing 타입일 때만 표시) ── -->
+            <div id="racing-speed-bar" class="hide items-center gap-2 border border-border rounded-lg px-3 py-1.5 bg-surface">
+              <span class="text-[11px] font-bold text-muted mr-1">속도</span>
+              <button onclick="setRacingSpeed(2000)" id="spd-slow"  class="rc-spd-btn active-spd">느리게</button>
+              <button onclick="setRacingSpeed(900)"  id="spd-mid"   class="rc-spd-btn">보통</button>
+              <button onclick="setRacingSpeed(350)"  id="spd-fast"  class="rc-spd-btn">빠르게</button>
+            </div>
             <!-- export button moved to main header -->
             <button onclick="addChartToDashboard()" class="bg-accent hover:bg-indigo-700 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all shadow-sm flex items-center gap-1.5">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
@@ -1589,8 +1650,10 @@ body { background: #fff; color: #0F172A; }
           </div>
         </div>
         <div id="studio-canvas-container" class="flex-1 bg-surface relative overflow-hidden flex items-center justify-center p-4">
-          <div class="bg-white p-3 rounded-2xl shadow-lg w-full max-w-[1100px] h-full max-h-[700px] flex items-center justify-center relative border border-border">
-            <canvas id="studio-canvas" class="w-full h-full object-contain"></canvas>
+          <div id="studio-chart-box" class="bg-white rounded-2xl shadow-lg w-full max-w-[1100px] h-full max-h-[700px] relative border border-border overflow-hidden flex items-center justify-center">
+            <canvas id="studio-canvas" class="w-full h-full object-contain" style="display:block"></canvas>
+            <!-- Racing chart DOM container (Flourish-style) — fills entire box -->
+            <div id="racing-dom-container" class="hide absolute inset-0" style="background:#fff"></div>
           </div>
         </div>
       </div>
@@ -1834,7 +1897,83 @@ body { background: #fff; color: #0F172A; }
           </div>
         </div>
 
-        <!-- ⑦ 고급 기능 -->
+        <!-- ⑦ 레이싱 차트 전용 (racing 타입일 때만 표시) -->
+        <div class="acc-section" id="acc-racing-section" style="display:none">
+          <div class="acc-hdr" onclick="toggleAcc('acc-racing')">
+            <div class="acc-hdr-left">
+              <div class="acc-hdr-icon bg-pink-50"><svg width="11" height="11" fill="none" stroke="#EC4899" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+              <span class="acc-hdr-title" style="color:#EC4899">🏁 레이싱 차트</span>
+            </div>
+            <svg class="acc-chevron w-3.5 h-3.5" id="chev-acc-racing" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="acc-body open" id="acc-racing">
+            <div class="acc-inner">
+              <!-- Palette -->
+              <div class="flex items-center justify-between">
+                <label class="text-[11px] font-semibold text-dark">팔레트</label>
+                <select id="prop-racing-palette" onchange="updateRacingProps()" class="prop-inp w-28 py-1">
+                  <option value="Flourish">Flourish</option>
+                  <option value="Engage">Engage</option>
+                  <option value="Reveal">Reveal</option>
+                  <option value="Blues">Blues</option>
+                  <option value="Purples">Purples</option>
+                  <option value="Greens">Greens</option>
+                  <option value="Sunset">Sunset</option>
+                  <option value="Monochrome">Monochrome</option>
+                </select>
+              </div>
+              <!-- Speed -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-[11px] font-semibold text-dark">재생 속도</label>
+                  <span id="val-racing-speed" class="text-[10px] font-medium text-muted">900ms</span>
+                </div>
+                <input id="prop-racing-speed" oninput="updateRacingProps()" type="range" min="200" max="2500" value="900" class="w-full accent-accent h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+              </div>
+              <!-- Playback buttons -->
+              <div class="flex gap-2 pt-1">
+                <button onclick="toggleRacingPlay()" id="racing-play-btn" class="flex-1 bg-accent hover:bg-indigo-700 text-white text-[11px] font-bold py-2 rounded-xl transition-all shadow-sm flex items-center justify-center gap-1">
+                  <span id="racing-play-icon">▶ 재생</span>
+                </button>
+                <button onclick="resetRacingChart()" class="flex-1 bg-surface hover:bg-slate-100 border border-border text-dark text-[11px] font-bold py-2 rounded-xl transition-all flex items-center justify-center gap-1">↺ 처음으로</button>
+              </div>
+              <!-- Loop -->
+              <div class="flex items-center justify-between">
+                <label class="text-[11px] font-semibold text-dark">반복 재생</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input id="prop-racing-loop" onchange="updateRacingProps()" type="checkbox" class="sr-only peer">
+                  <div class="w-8 h-4 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-accent"></div>
+                </label>
+              </div>
+              <!-- Timeline -->
+              <div class="flex items-center justify-between">
+                <label class="text-[11px] font-semibold text-dark">타임라인 표시</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input id="prop-racing-timeline" onchange="updateRacingProps()" type="checkbox" checked class="sr-only peer">
+                  <div class="w-8 h-4 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-accent"></div>
+                </label>
+              </div>
+              <!-- Big time -->
+              <div class="flex items-center justify-between">
+                <label class="text-[11px] font-semibold text-dark">연도 워터마크</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input id="prop-racing-bigtime" onchange="updateRacingProps()" type="checkbox" checked class="sr-only peer">
+                  <div class="w-8 h-4 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-accent"></div>
+                </label>
+              </div>
+              <!-- Total -->
+              <div class="flex items-center justify-between">
+                <label class="text-[11px] font-semibold text-dark">합계 표시</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input id="prop-racing-total" onchange="updateRacingProps()" type="checkbox" class="sr-only peer">
+                  <div class="w-8 h-4 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-accent"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑧ 고급 기능 -->
         <div class="acc-section border-b-0">
           <div class="acc-hdr" onclick="toggleAcc('acc-adv')">
             <div class="acc-hdr-left">
@@ -2548,7 +2687,14 @@ const chartProps = {
   legendBold: false,
   chartTitle: '',
   titleAlign: 'left',
-  titleSize: 16
+  titleSize: 16,
+  // ── Racing chart (Flourish) ──
+  racingPalette: 'Flourish',
+  racingMsPerStep: 900,
+  racingLoop: false,
+  racingShowTimeline: true,
+  racingShowBigTime: true,
+  racingShowTotal: false,
 };
 
 let hasInitializedTopNDefault = false;
@@ -2932,6 +3078,7 @@ function studioSelectTemplate(chartType, title, desc) {
   document.getElementById('editor-studio').classList.remove('hide');
 
   setTimeout(() => drawStudioChart(chartType, studioCurrentColor), 50);
+  syncRacingSection(chartType);
 }
 
 function studioColorChange(color) {
@@ -2941,10 +3088,547 @@ function studioColorChange(color) {
   drawMiniPreviewOverlayIfOpen();
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   Flourish Racing Chart Engine (ported from App.jsx)
+═══════════════════════════════════════════════════════════════ */
+
+// ── Palettes (from App.jsx) ──────────────────────────────────
+const RACING_PALETTES = {
+  'Flourish':    ['#3A2E58','#FF6A2A','#4d78a7','#76B7B2','#59A14F','#EDC948','#B07AA1','#E15759','#9C755F','#F28E2B'],
+  'Engage':      ['#7C3AED','#F97316','#06B6D4','#22C55E','#EAB308','#EF4444','#3B82F6','#EC4899','#14B8A6','#F59E0B'],
+  'Reveal':      ['#0EA5E9','#F59E0B','#10B981','#EF4444','#8B5CF6','#3B82F6','#F97316','#14B8A6','#a855f7','#ec4899'],
+  'Blues':       ['#1D4ED8','#2563EB','#3B82F6','#60A5FA','#93C5FD','#0EA5E9','#0284C7','#0369A1','#075985','#0c4a6e'],
+  'Purples':     ['#4C1D95','#6D28D9','#7C3AED','#A78BFA','#C4B5FD','#5B21B6','#7a30ce','#9333ea','#a855f7','#d946ef'],
+  'Greens':      ['#14532D','#166534','#16A34A','#22C55E','#4ADE80','#86EFAC','#15803D','#2fcf6a','#059669','#10b981'],
+  'Sunset':      ['#7C2D12','#C2410C','#EA580C','#F97316','#FB923C','#FCA5A5','#FDE68A','#A3E635','#4ADE80','#34D399'],
+  'Monochrome':  ['#111827','#374151','#4B5563','#6B7280','#9CA3AF','#D1D5DB','#E5E7EB','#F3F4F6','#1F2937','#374151'],
+};
+
+// Sample racing data (SNS user counts)
+const RACING_SAMPLE = [
+  {b:'유튜브',     v:{2019:2900,2020:3200,2021:3600,2022:3900,2023:4100,2024:4300}},
+  {b:'카카오톡',   v:{2019:4100,2020:4200,2021:4250,2022:4280,2023:4300,2024:4320}},
+  {b:'인스타그램', v:{2019:1700,2020:1850,2021:1950,2022:2050,2023:2150,2024:2250}},
+  {b:'틱톡',       v:{2019:200, 2020:500, 2021:900, 2022:1300,2023:1600,2024:1900}},
+  {b:'페이스북',   v:{2019:3000,2020:2700,2021:2200,2022:1700,2023:1200,2024:900}},
+  {b:'X(트위터)',  v:{2019:1100,2020:1050,2021:1000,2022:970, 2023:940, 2024:920}},
+  {b:'네이버',     v:{2019:650, 2020:700, 2021:750, 2022:780, 2023:800, 2024:820}},
+];
+
+// ── Utilities ────────────────────────────────────────────────
+function rcNiceMax(x) {
+  if (!isFinite(x) || x <= 0) return 1;
+  const m = x * 1.06, exp = Math.floor(Math.log10(m)), base = Math.pow(10, exp), f = m / base;
+  return (([1,1.2,1.5,2,2.5,3,4,5,6,8,10]).find(v => f <= v) ?? 10) * base;
+}
+
+function rcSmoothAxisFactory() {
+  const s = { cur: 1 };
+  return function(target, { up=0.45, down=0.08, snapUp=2.2, min=1 }={}) {
+    const t = isFinite(target)&&target>0 ? target : min;
+    const p = isFinite(s.cur)&&s.cur>0 ? s.cur : t;
+    let n = p;
+    if (t > p*snapUp) n = t;
+    else if (t > p) n = p + (t-p)*up;
+    else n = p + (t-p)*down;
+    s.cur = isFinite(n)&&n>0 ? n : min;
+    return s.cur;
+  };
+}
+
+function rcFmt(n, dec=0) {
+  if (!isFinite(n)) return '';
+  try { return new Intl.NumberFormat('ko-KR',{maximumFractionDigits:dec,minimumFractionDigits:dec}).format(n); }
+  catch { return String(n); }
+}
+
+function isTimeHeader(h) {
+  return /^\d{4}([.\-\/]\d{1,2})?$/.test(String(h).trim());
+}
+// sort key for year-like column names (e.g. "2021", "2021.3")
+function timeKey(s) {
+  const m = String(s).trim().match(/^(\d{4})(?:[.\-\/](\d{1,2}))?$/);
+  if (!m) return Number.MAX_SAFE_INTEGER;
+  return Number(m[1]) * 100 + (m[2] ? Number(m[2]) : 0);
+}
+
+// ── Build racing dataset from various sources ────────────────
+function buildFlourishRacingData() {
+  // 1. Custom mode with year-column data
+  if (selectedCategory === 'custom' && genHeaders.length > 1 && genRows.length > 0) {
+    const timeCols = genHeaders.reduce((acc,h,i) => { if(isTimeHeader(h)) acc.push(i); return acc; }, [])
+      .sort((a,b)=>{ const ta=genHeaders[a].trim(), tb=genHeaders[b].trim(); return timeKey(ta)-timeKey(tb); });
+
+    const labelIdx = genHeaders.findIndex((h,i)=>!isTimeHeader(h));
+
+    if (timeCols.length >= 2 && labelIdx >= 0) {
+      const brandMap = new Map(); // label → values[]
+      genRows.forEach(row => {
+        const lbl = String(row[labelIdx]??'').trim(); if(!lbl) return;
+        const vals = timeCols.map(i => { const v=parseFloat(String(row[i]??'').replace(/,/g,'')); return isFinite(v)?Math.max(0,v):0; });
+        if (vals.some(v=>v>0)) {
+          if (!brandMap.has(lbl)) brandMap.set(lbl, vals);
+        }
+      });
+      if (brandMap.size > 0) {
+        const brands = [...brandMap.keys()];
+        const frames = timeCols.map((ci,fi) => ({
+          year: genHeaders[ci],
+          values: Object.fromEntries(brands.map(b=>[b,brandMap.get(b)[fi]||0]))
+        }));
+        return { brands, frames, timeCols: timeCols.map(i=>genHeaders[i]) };
+      }
+    }
+
+    // Single year column → 2-frame with prev/current
+    const cData = buildCurrentChartData({ type:'racing', fallbackToSample:false });
+    if (cData.usable && cData.labels.length > 0) {
+      const brands = cData.labels.slice(0,12).map((l,i)=>String(l||`항목${i+1}`));
+      const vals  = cData.values.slice(0,brands.length).map(v=>Math.max(0,Number(v)||0));
+      const prev  = cData.values2.slice(0,brands.length).map((v,i)=>{ const p=Number(v)||0; return p>0?p:Math.max(1,vals[i]*0.6); });
+      const frames = [
+        { year:'이전', values:Object.fromEntries(brands.map((b,i)=>[b,prev[i]])) },
+        { year:'현재', values:Object.fromEntries(brands.map((b,i)=>[b,vals[i]])) },
+      ];
+      return { brands, frames, timeCols:['이전','현재'] };
+    }
+  }
+
+  // 2. Academy mode (sample)
+  if (selectedCategory === 'acad' && SAMPLE_DATA.labels.length > 0) {
+    const brands = SAMPLE_DATA.labels.slice(0,10);
+    const vals  = SAMPLE_DATA.values.slice(0,brands.length).map(v=>Math.max(0,Number(v)||0));
+    const prev  = SAMPLE_DATA.values2.slice(0,brands.length).map((v,i)=>{ const p=Number(v)||0; return p>0?p:Math.max(1,vals[i]*0.6); });
+    const frames = [
+      { year:'이전', values:Object.fromEntries(brands.map((b,i)=>[b,prev[i]])) },
+      { year:'현재', values:Object.fromEntries(brands.map((b,i)=>[b,vals[i]])) },
+    ];
+    return { brands, frames, timeCols:['이전','현재'] };
+  }
+
+  // 3. Fallback: built-in SNS sample data
+  const years = [2019,2020,2021,2022,2023,2024];
+  const brands = RACING_SAMPLE.map(s=>s.b);
+  const frames = years.map(y=>({ year:String(y), values:Object.fromEntries(RACING_SAMPLE.map(s=>[s.b,s.v[y]])) }));
+  return { brands, frames, timeCols:years.map(String) };
+}
+
+/* ── FlourishRacingChart class ──────────────────────────────── */
+class FlourishRacingChart {
+  constructor(container) {
+    this.el = container;
+    this.brands = []; this.frames = []; this.timeCols = [];
+    this.t = 0; this.maxT = 0;
+    this.playing = false;
+    this._smoothAxis = rcSmoothAxisFactory();
+    this._sRanks = {}; this._sWidths = {};
+    this._prevKeys = new Set();
+    this._rafId = null; this._lastTs = null;
+    this._step = this._step.bind(this);
+    this._onScrub = this._onScrub.bind(this);
+    this._build();
+  }
+
+  // ── DOM build ───────────────────────────────────────────────
+  _build() {
+    this.el.innerHTML = '';
+    const w = document.createElement('div');
+    w.className = 'rc-wrap';
+    this.el.appendChild(w); this.wrapEl = w;
+
+    // title
+    this.titleEl = w.appendChild(Object.assign(document.createElement('div'),{className:'rc-title'}));
+
+    // axis
+    this.axisEl = w.appendChild(document.createElement('div'));
+    this.axisEl.className = 'rc-axis';
+    this.axisEl.innerHTML = `<div class="rc-axis-spacer"></div><div class="rc-axis-area"><div class="rc-axis-line"></div></div>`;
+    this._axisArea = this.axisEl.querySelector('.rc-axis-area');
+
+    // plot
+    this.plotEl = w.appendChild(Object.assign(document.createElement('div'),{className:'rc-plot'}));
+
+    // big time
+    this.bigEl = Object.assign(document.createElement('div'),{className:'rc-bigtime'});
+    this.bigYearEl = this.bigEl.appendChild(Object.assign(document.createElement('div'),{className:'rc-bigtime-year'}));
+    this.bigTotalEl = this.bigEl.appendChild(Object.assign(document.createElement('div'),{className:'rc-bigtime-total'}));
+    this.plotEl.appendChild(this.bigEl);
+
+    // timeline
+    this.tlEl = Object.assign(document.createElement('div'),{className:'rc-timeline'});
+    this.playBtn = Object.assign(document.createElement('button'),{className:'rc-play-btn',type:'button'});
+    this.playBtn.textContent = '▶';
+    this.playBtn.addEventListener('click', ()=>this._toggle());
+    this.tlEl.appendChild(this.playBtn);
+
+    const tw = document.createElement('div'); tw.className = 'rc-track-wrap';
+    tw.innerHTML = '<div class="rc-track-line"></div><div class="rc-track-progress" id="rc-prog"></div>';
+    this._prog = tw.querySelector('#rc-prog');
+    this.handleEl = Object.assign(document.createElement('div'),{className:'rc-handle'});
+    tw.appendChild(this.handleEl);
+    this.ticksEl = Object.assign(document.createElement('div'),{style:'position:relative;width:100%;height:100%'});
+    tw.appendChild(this.ticksEl);
+    this.rangeEl = Object.assign(document.createElement('input'),{type:'range',className:'rc-range',min:0,max:0,step:.001,value:0});
+    this.rangeEl.addEventListener('input', this._onScrub);
+    this.rangeEl.addEventListener('mousedown', ()=>this.pause());
+    tw.appendChild(this.rangeEl);
+    this.tlEl.appendChild(tw);
+    this.el.appendChild(this.tlEl);
+  }
+
+  // ── Load data ───────────────────────────────────────────────
+  load({ brands, frames, timeCols }) {
+    if (this.playing) { this.pause(); }
+    this.brands = brands;
+    this.frames = frames;
+    this.timeCols = timeCols;
+    this.maxT = Math.max(0, frames.length - 1);
+    this.t = 0;
+    this._sRanks = {}; this._sWidths = {};
+    this._prevKeys = new Set();
+    if (this.rangeEl) { this.rangeEl.max = this.maxT; this.rangeEl.value = 0; }
+    this._buildTicks();
+    this.render(true);
+    // ── 자동재생 제거: 재생 버튼을 눌러야 시작 ──
+  }
+
+  _buildTicks() {
+    const el = this.ticksEl; if(!el) return;
+    el.innerHTML = '';
+    if (!this.frames.length) return;
+    const n = Math.min(10, this.frames.length);
+    const step = Math.max(1, Math.floor(this.frames.length / n));
+    this.frames.forEach((f,i) => {
+      if (i % step !== 0 && i !== this.frames.length-1) return;
+      const pct = this.maxT > 0 ? (i/this.maxT)*100 : 0;
+      const t = Object.assign(document.createElement('div'),{className:'rc-tick'});
+      t.style.left = `${pct}%`;
+      t.innerHTML = '<div class="rc-tick-line"></div><div class="rc-tick-lbl"></div>';
+      t.querySelector('.rc-tick-lbl').textContent = f.year;
+      el.appendChild(t);
+    });
+  }
+
+  // ── Render frame ────────────────────────────────────────────
+  render(snap=false) {
+    if (!this.frames.length) return;
+
+    // Read chart props
+    const isDark = chartProps.theme === 'dark';
+    this.wrapEl.classList.toggle('rc-dark', isDark);
+    this.wrapEl.style.background = isDark ? '#0F172A' : '#fff';
+    this.el.style.setProperty('--rc-bg', isDark ? '#0F172A' : '#fff');
+
+    // Title
+    if (this.titleEl) {
+      this.titleEl.textContent = chartProps.chartTitle || '';
+      this.titleEl.style.display = chartProps.chartTitle ? '' : 'none';
+      this.titleEl.style.fontSize = (chartProps.titleSize||20) + 'px';
+      this.titleEl.style.textAlign = chartProps.titleAlign || 'left';
+      this.titleEl.style.color = isDark ? '#e5e7eb' : '#111827';
+    }
+
+    // Interpolate current frame
+    const ti = Math.max(0, Math.min(this.t, this.maxT));
+    const i  = Math.floor(ti), frac = ti - i, i2 = Math.min(i+1, this.maxT);
+    const f1 = this.frames[i], f2 = this.frames[i2];
+    const timeLabel = f1.year;
+    const topN = Math.max(1, chartProps.topN > 0 ? chartProps.topN : 8);
+
+    // Compute values
+    const items = this.brands.map(b => {
+      const v1 = Number(f1.values[b])||0, v2 = Number(f2.values[b])||0;
+      return { key:b, label:b, value: v1+(v2-v1)*frac };
+    });
+    const sorted = [...items].sort((a,b) => b.value - a.value);
+    const top = sorted.slice(0,topN).map((d,idx) => ({...d, rank:idx}));
+    const total = items.reduce((s,d)=>s+d.value,0);
+    const axisMax = this._smoothAxis(rcNiceMax(Math.max(...top.map(d=>d.value),1)));
+
+    // Lerp factor
+    const msPS = chartProps.racingMsPerStep ?? 900;
+    const lf = snap ? 1.0 : Math.max(0.04, Math.min(0.65, 1-Math.pow(0.18, 900/Math.max(1,msPS))));
+
+    // Get label width (px)
+    const plotW = this.plotEl.offsetWidth || 600;
+    const labelWidthPx = Math.round(100 + (Math.max(10,Math.min(50,chartProps.labelWidth||20))-10)/40 * 200);
+
+    // ── Fix: 타임라인이 plot 위에 겹치지 않도록 bottom padding 확보 ──
+    const tlVisible = chartProps.racingShowTimeline !== false;
+    this.plotEl.style.paddingBottom = tlVisible ? '68px' : '10px';
+
+    // Axis spacer width
+    const sp = this.axisEl.querySelector('.rc-axis-spacer');
+    if (sp) sp.style.width = `${labelWidthPx + 10}px`;
+
+    // Render axis
+    this._renderAxis(axisMax, labelWidthPx, isDark);
+
+    // Bar dimensions — exclude the timeline padding from available height
+    const tlPad = tlVisible ? 68 : 10;
+    const plotH = Math.max(10, (this.plotEl.offsetHeight || 400) - tlPad - 8);
+    const gap = Math.round(6 + (chartProps.barGap||10)/100*14);
+    let barH = topN>0 ? Math.floor((plotH - gap*(topN-1))/topN) : 28;
+    barH = Math.max(8, Math.min(80, barH));
+
+    const palette = RACING_PALETTES[chartProps.racingPalette||'Flourish'] || RACING_PALETTES['Flourish'];
+    const opacity = chartProps.opacity ?? 0.92;
+    const decimals = chartProps.labelDecimals ?? 0;
+
+    const existing = new Map();
+    this.plotEl.querySelectorAll('.rc-bar-row').forEach(el => existing.set(el.dataset.key, el));
+    const newKeys = new Set(top.map(d=>d.key));
+
+    top.forEach(d => {
+      const isNew = !this._prevKeys.has(d.key);
+      const colorIdx = this.brands.indexOf(d.key);
+      const color = palette[colorIdx % palette.length];
+
+      // Smooth rank
+      const pR = this._sRanks[d.key] ?? d.rank;
+      const cR = isNew||snap ? d.rank : pR+(d.rank-pR)*lf;
+      this._sRanks[d.key] = cR;
+      const y = cR*(barH+gap);
+
+      // Smooth width
+      const tW = axisMax>0 ? Math.min((d.value/axisMax)*100,100) : 0;
+      const pW = this._sWidths[d.key] ?? tW;
+      const cW = isNew||snap ? tW : pW+(tW-pW)*lf;
+      this._sWidths[d.key] = cW;
+
+      let el = existing.get(d.key);
+      if (!el) {
+        el = this._makeBar(d.key);
+        this.plotEl.insertBefore(el, this.bigEl);
+      }
+      existing.delete(d.key);
+
+      el.style.transform = `translate3d(0,${y}px,0)`;
+      el.style.height = `${barH}px`;
+      if (isNew) { el.style.opacity='0'; requestAnimationFrame(()=>{ el.style.opacity='1'; }); }
+
+      const lbl = el.querySelector('.rc-bar-label');
+      if (lbl) { lbl.style.width=`${labelWidthPx}px`; lbl.textContent=d.label; lbl.style.fontSize=Math.max(10,Math.min(16,Math.round(barH*0.46)))+'px'; lbl.style.color=isDark?'#e5e7eb':'#111827'; }
+
+      const fill = el.querySelector('.rc-bar-fill');
+      if (fill) { fill.style.width=`${cW}%`; fill.style.background=color; fill.style.opacity=opacity; fill.style.height=`${barH}px`; }
+
+      const val = el.querySelector('.rc-bar-value');
+      if (val) { val.textContent=rcFmt(d.value,decimals); val.style.fontSize=Math.max(10,Math.min(14,Math.round(barH*0.42)))+'px'; val.style.color=isDark?'#e5e7eb':'#374151'; }
+    });
+    existing.forEach(el=>el.remove());
+    this._prevKeys = newKeys;
+
+    // Big time
+    const showBig = chartProps.racingShowBigTime !== false;
+    this.bigEl.style.display = showBig ? '' : 'none';
+    if (showBig) {
+      this.bigYearEl.textContent = timeLabel;
+      this.bigYearEl.style.color = isDark ? 'rgba(255,255,255,.16)' : 'rgba(15,23,42,.11)';
+      this.bigTotalEl.textContent = chartProps.racingShowTotal ? `합계: ${rcFmt(total,0)}` : '';
+      this.bigTotalEl.style.display = chartProps.racingShowTotal ? '' : 'none';
+    }
+
+    // Timeline
+    const showTL = chartProps.racingShowTimeline !== false;
+    this.tlEl.style.display = showTL ? '' : 'none';
+    const pct = this.maxT>0 ? (ti/this.maxT)*100 : 0;
+    if (this.handleEl) this.handleEl.style.left = `${pct}%`;
+    if (this._prog) this._prog.style.width = `${pct}%`;
+    if (this.rangeEl) this.rangeEl.value = ti;
+    if (this.playBtn) this.playBtn.textContent = this.playing ? '❚❚' : (ti >= this.maxT ? '↺' : '▶');
+    if (this.playBtn) { this.playBtn.style.background = isDark ? 'rgba(255,255,255,.85)' : 'rgba(15,23,42,.82)'; this.playBtn.style.color = isDark?'#111':'#fff'; }
+  }
+
+  _renderAxis(axisMax, labelWidthPx, isDark) {
+    const area = this._axisArea;
+    if (!area) return;
+    area.style.display = chartProps.showAxis !== false ? '' : 'none';
+
+    const ticks = chartProps.tickCount ?? 3;
+    // Rebuild ticks if count changed
+    const existing = area.querySelectorAll('.rc-axis-tick');
+    if (existing.length !== ticks+1) {
+      area.querySelectorAll('.rc-axis-tick').forEach(el=>el.remove());
+      for(let i=0;i<=ticks;i++) {
+        const t = document.createElement('div'); t.className='rc-axis-tick';
+        const xp = (i/ticks)*100;
+        t.style.left = `${xp}%`;
+        const gl = document.createElement('div'); gl.className='rc-axis-grid';
+        const lb = document.createElement('div'); lb.className='rc-axis-lbl';
+        lb.style.transform = i===0?'translateX(0)':i===ticks?'translateX(-100%)':'translateX(-50%)';
+        t.appendChild(gl); t.appendChild(lb);
+        area.appendChild(t);
+      }
+    }
+    const plotH = this.plotEl.offsetHeight;
+    area.querySelectorAll('.rc-axis-tick').forEach((t,i) => {
+      const v = (axisMax/ticks)*i;
+      const lb = t.querySelector('.rc-axis-lbl');
+      if(lb) { lb.textContent=rcFmt(v,0); lb.style.color=isDark?'#9ca3af':'#374151'; }
+      const gl = t.querySelector('.rc-axis-grid');
+      if(gl) { gl.style.height=`${plotH}px`; gl.style.display=chartProps.showGrid!==false?'':'none'; }
+    });
+
+    // Axis line color
+    const ln = area.querySelector('.rc-axis-line');
+    if(ln) ln.style.background = isDark?'rgba(255,255,255,.3)':'rgba(0,0,0,.22)';
+  }
+
+  _makeBar(key) {
+    const el = document.createElement('div');
+    el.className = 'rc-bar-row'; el.dataset.key = key;
+    el.innerHTML = `<div class="rc-bar-label"></div><div class="rc-bar-track"><div class="rc-bar-fill"><div class="rc-bar-value"></div></div></div>`;
+    return el;
+  }
+
+  // ── Playback ────────────────────────────────────────────────
+  play() {
+    if (this.playing) return;
+    if (this.t >= this.maxT) this.t = 0;
+    this.playing = true; this._lastTs = null;
+    this._rafId = requestAnimationFrame(this._step);
+  }
+
+  pause() {
+    if (!this.playing) return;
+    this.playing = false;
+    if (this._rafId) { cancelAnimationFrame(this._rafId); this._rafId = null; }
+    if (this.playBtn) this.playBtn.textContent = this.t>=this.maxT ? '↺' : '▶';
+  }
+
+  _toggle() { this.playing ? this.pause() : this.play(); }
+
+  _step(ts) {
+    if (this._lastTs==null) this._lastTs=ts;
+    const dt = Math.min(ts-this._lastTs, 200); this._lastTs=ts;
+    const ms = chartProps.racingMsPerStep ?? 900;
+    this.t += dt/ms;
+    if (this.t >= this.maxT) {
+      if (chartProps.racingLoop) { this.t=0; }
+      else { this.t=this.maxT; this.pause(); this.render(false); return; }
+    }
+    this.render(false);
+    this._rafId = requestAnimationFrame(this._step);
+  }
+
+  _onScrub(e) { this.t=Number(e.target.value); this.render(true); }
+
+  destroy() { this.pause(); }
+}
+
+// ── Global racing chart instance ─────────────────────────────
+let _rcInstance = null;
+
+function ensureRacingChart() {
+  const c = document.getElementById('racing-dom-container');
+  if (!c) return null;
+  if (!_rcInstance || _rcInstance.el !== c) {
+    if (_rcInstance) _rcInstance.destroy();
+    _rcInstance = new FlourishRacingChart(c);
+  }
+  return _rcInstance;
+}
+
+function drawFlourishRacing() {
+  const rc = ensureRacingChart();
+  if (!rc) return;
+  const data = buildFlourishRacingData();
+  if (!data.brands.length) return;
+
+  const same = rc.brands.join() === data.brands.join() && rc.frames.length === data.frames.length;
+  if (!same) {
+    // Wait one frame so the container has real dimensions
+    requestAnimationFrame(() => { rc.load(data); });
+  } else {
+    rc.render(false);
+  }
+}
+
+function destroyRacingChart() {
+  if (_rcInstance) { _rcInstance.destroy(); _rcInstance = null; }
+}
+
+function updateRacingProps() {
+  const palette = document.getElementById('prop-racing-palette')?.value;
+  const speed   = parseInt(document.getElementById('prop-racing-speed')?.value)||900;
+  const loop    = document.getElementById('prop-racing-loop')?.checked;
+  const tl      = document.getElementById('prop-racing-timeline')?.checked;
+  const big     = document.getElementById('prop-racing-bigtime')?.checked;
+  const total   = document.getElementById('prop-racing-total')?.checked;
+
+  if (palette) chartProps.racingPalette = palette;
+  chartProps.racingMsPerStep = speed;
+  chartProps.racingLoop = loop;
+  chartProps.racingShowTimeline = tl;
+  chartProps.racingShowBigTime = big;
+  chartProps.racingShowTotal = total;
+
+  const speedLabel = document.getElementById('val-racing-speed');
+  if (speedLabel) speedLabel.textContent = speed + 'ms';
+
+  if (_rcInstance) { _rcInstance.msPerStep = speed; _rcInstance.loop = loop; _rcInstance.render(false); }
+}
+
+function toggleRacingPlay() {
+  if (!_rcInstance) return;
+  _rcInstance._toggle();
+  const icon = document.getElementById('racing-play-icon');
+  if (icon) icon.textContent = _rcInstance.playing ? '❚❚ 일시정지' : (_rcInstance.t >= _rcInstance.maxT ? '↺ 다시재생' : '▶ 재생');
+}
+
+function resetRacingChart() {
+  if (!_rcInstance) return;
+  _rcInstance.pause();
+  _rcInstance.t = 0;
+  _rcInstance.render(true);
+  const icon = document.getElementById('racing-play-icon');
+  if (icon) icon.textContent = '▶ 재생';
+}
+
+function setRacingSpeed(ms) {
+  chartProps.racingMsPerStep = ms;
+  if (_rcInstance) _rcInstance.msPerStep = ms;
+  // Sync sidebar slider
+  const sl = document.getElementById('prop-racing-speed');
+  if (sl) { sl.value = ms; document.getElementById('val-racing-speed').textContent = ms + 'ms'; }
+  // Highlight active button
+  const map = { 2000:'spd-slow', 900:'spd-mid', 350:'spd-fast' };
+  ['spd-slow','spd-mid','spd-fast'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.classList.toggle('active-spd', map[ms] === id);
+  });
+}
+
+function syncRacingSection(type) {
+  const sec = document.getElementById('acc-racing-section');
+  if (sec) sec.style.display = type === 'racing' ? '' : 'none';
+  // Show/hide toolbar speed bar
+  const bar = document.getElementById('racing-speed-bar');
+  if (bar) { bar.classList.toggle('hide', type !== 'racing'); bar.classList.toggle('show', type === 'racing'); }
+}
+
+
 function drawStudioChart(type, color) {
   const canvas    = document.getElementById('studio-canvas');
   const container = document.getElementById('studio-canvas-container');
+  const racingDom = document.getElementById('racing-dom-container');
   if (!canvas || !container) return;
+
+  if (type === 'racing') {
+    canvas.style.display = 'none';
+    if (racingDom) {
+      racingDom.classList.remove('hide');
+      racingDom.style.display = 'flex';
+      racingDom.style.flexDirection = 'column';
+    }
+    // Defer to let browser apply layout before measuring offsetHeight
+    setTimeout(() => drawFlourishRacing(), 20);
+    return;
+  }
+
+  canvas.style.display = '';
+  if (racingDom) { racingDom.classList.add('hide'); destroyRacingChart(); }
   const W = container.clientWidth  || 800;
   const H = container.clientHeight || 500;
   canvas.width  = W;
