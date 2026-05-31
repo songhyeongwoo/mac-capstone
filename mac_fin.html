@@ -7628,6 +7628,117 @@ async function generateAIReport(data, tone) {
 
 </body>
 
+
+<!-- ━━━━━━━━━━ TUTORIAL SLIDER ━━━━━━━━━━ -->
+<script>
+(function() {
+  var TOTAL = 6;
+  var cur = 0;
+
+  function initTuto() {
+    renderDots();
+    showSlide(0);
+  }
+
+  function renderDots() {
+    var el = document.getElementById('tuto-dots-header');
+    if (!el) return;
+    var html = '';
+    for (var i = 0; i < TOTAL; i++) {
+      html += '<span class="tuto-dot' + (i === 0 ? ' active' : '') + '" onclick="goTutoSlide(' + i + ')"></span>';
+    }
+    el.innerHTML = html;
+  }
+
+  function showSlide(idx, dir) {
+    var slides = document.querySelectorAll('.tuto-slide');
+    if (!slides.length) return;
+
+    slides.forEach(function(s, i) {
+      s.style.transition = 'none';
+      s.style.opacity = '0';
+      if (i === idx) {
+        if (dir !== undefined) {
+          s.style.transform = dir > 0 ? 'translateX(40px)' : 'translateX(-40px)';
+        } else {
+          s.style.transform = 'translateX(0)';
+          s.style.opacity = '1';
+        }
+        s.style.zIndex = '2';
+      } else {
+        s.style.transform = 'translateX(0)';
+        s.style.zIndex = '1';
+      }
+    });
+
+    if (dir !== undefined) {
+      requestAnimationFrame(function() { requestAnimationFrame(function() {
+        slides[idx].style.transition = 'opacity 0.28s ease, transform 0.28s ease';
+        slides[idx].style.opacity = '1';
+        slides[idx].style.transform = 'translateX(0)';
+      }); });
+    }
+
+    // 도트 업데이트
+    document.querySelectorAll('.tuto-dot').forEach(function(d, i) {
+      d.classList.toggle('active', i === idx);
+    });
+
+    // 카운터
+    var counter = document.getElementById('tuto-step-counter');
+    if (counter) counter.textContent = (idx + 1) + ' / ' + TOTAL;
+
+    // 버튼 상태
+    var prev = document.getElementById('tuto-btn-prev');
+    var next = document.getElementById('tuto-btn-next');
+    if (prev) prev.disabled = (idx === 0);
+    if (next) {
+      if (idx === TOTAL - 1) {
+        next.innerHTML = '완료 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
+        next.onclick = function() { go('new-viz'); };
+        next.className = 'flex items-center gap-2 px-5 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-orange-600 transition';
+      } else {
+        next.innerHTML = '다음 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>';
+        next.onclick = function() { moveTutoSlide(1); };
+        next.className = 'flex items-center gap-2 px-5 py-2 rounded-xl bg-dark text-white text-sm font-semibold hover:bg-neutral-800 transition';
+      }
+    }
+  }
+
+  window.moveTutoSlide = function(dir) {
+    var next = cur + dir;
+    if (next < 0 || next >= TOTAL) return;
+    cur = next;
+    showSlide(cur, dir);
+  };
+
+  window.goTutoSlide = function(idx) {
+    var dir = idx > cur ? 1 : -1;
+    cur = idx;
+    showSlide(cur, dir);
+  };
+
+  // 튜토리얼 페이지 진입 시 cur 리셋
+  var origGo = window.go;
+  if (origGo) {
+    window.go = function(page) {
+      if (page === 'tutorial-first-chart') cur = 0;
+      return origGo.apply(this, arguments);
+    };
+  }
+
+  // 키보드 방향키
+  document.addEventListener('keydown', function(e) {
+    var p = document.getElementById('page-tutorial-first-chart');
+    if (!p || p.classList.contains('hide')) return;
+    if (e.key === 'ArrowRight') moveTutoSlide(1);
+    if (e.key === 'ArrowLeft')  moveTutoSlide(-1);
+  });
+
+  document.addEventListener('DOMContentLoaded', initTuto);
+})();
+</script>
+
 <!-- ━━━━━━━━━━ HERO FLOW ANIMATION ━━━━━━━━━━ -->
 <script>
 (function () {
@@ -7742,6 +7853,9 @@ async function generateAIReport(data, tone) {
     clearAT();
     GC.init();
     GC.reset();
+    // 데이터 초기화는 각 anim 함수 진입 즉시 실행
+    if (idx === 2) { var c = document.getElementById('hs3-rows'); if(c) c.innerHTML = ''; }
+    if (idx === 5) { var g = document.getElementById('hs6-dashboard-grid'); if(g) g.querySelectorAll('[data-added]').forEach(function(e){e.remove();}); }
     var fns = [anim0, anim1, anim2, anim3, anim4, anim5];
     AT(function() { if (fns[idx]) fns[idx](); }, 350);
   }
@@ -7780,6 +7894,7 @@ async function generateAIReport(data, tone) {
   }
 
   function anim2() {
+    // 진입 즉시 초기화 (이전 순환 데이터 제거)
     var container = document.getElementById('hs3-rows');
     if (!container) return;
     container.innerHTML = '';
@@ -7887,6 +8002,7 @@ async function generateAIReport(data, tone) {
     var b2 = document.getElementById('hs6-btn-line');
     var grid = document.getElementById('hs6-dashboard-grid');
     if (!b1 || !b2) return;
+    // (초기화는 onEnter에서 이미 처리됨)
 
     function addChartCard(html, delay) {
       AT(function() {
@@ -7894,6 +8010,7 @@ async function generateAIReport(data, tone) {
         var card = document.createElement('div');
         card.style.cssText = 'background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:12px;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);opacity:0;transform:scale(0.92);transition:opacity .3s ease,transform .3s ease;';
         card.innerHTML = html;
+        card.setAttribute('data-added', '1');
         grid.appendChild(card);
         requestAnimationFrame(function() { requestAnimationFrame(function() {
           card.style.opacity = '1';
@@ -7905,10 +8022,12 @@ async function generateAIReport(data, tone) {
     var p1 = pos(b1);
     GC.appear(p1.x + 55, p1.y + 65);
     AT(function() { GC.moveToEl(b1, 650); }, 150);
+    // b1 클릭 (950ms) → 즉시 카드 추가 (클릭과 동시)
     AT(function() {
       GC.click();
       b1.style.transition = 'background .15s, border-color .15s';
       b1.style.background = '#eef2ff'; b1.style.borderColor = '#6366f1';
+      // 클릭과 동시에 카드 생성
       addChartCard(
         '<p style="font-size:9px;font-weight:700;color:#64748b">막대 차트 +</p>' +
         '<div style="flex:1;display:flex;align-items:flex-end;gap:3px;height:52px;padding:0 2px">' +
@@ -7922,6 +8041,7 @@ async function generateAIReport(data, tone) {
     }, 950);
     AT(function() { b1.style.background = ''; b1.style.borderColor = ''; }, 1200);
 
+    // b2 이동 → 클릭 → 즉시 카드 추가
     AT(function() { GC.moveToEl(b2, 550); }, 1650);
     AT(function() {
       GC.click();
@@ -7969,4 +8089,4 @@ async function generateAIReport(data, tone) {
   window.startHeroAnimation = start;
 })();
 </script>
-</html>
+</html>g
