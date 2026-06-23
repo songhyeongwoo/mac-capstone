@@ -1922,6 +1922,7 @@ body { background: #fff; color: #0F172A; }
               </div>
               <select id="gen-y-axis" class="prop-inp py-2" title="예: 매출액, 인원수, 점수" onchange="handleAxisChange()"></select>
               <p class="text-[11px] text-slate-400 font-semibold mt-1.5">예: 매출액, 인원수, 점수</p>
+              <p id="gen-racing-axis-help" class="hide text-[11px] text-primary font-bold mt-1.5">레이싱 차트는 선택한 값 열부터 오른쪽 숫자 열 전체를 시간축으로 사용합니다.</p>
             </div>
           </div>
           <div class="mini-preview-card mt-auto rounded-2xl border border-border bg-surface p-3"
@@ -3220,10 +3221,13 @@ function drawRacingExportFrame(canvas, data, t) {
   const topN = Math.max(1, chartProps.topN > 0 ? chartProps.topN : 8);
 
   const items = brands.map((brand, idx) => {
-    const v1 = Number(f1.values?.[brand]) || 0;
-    const v2 = Number(f2.values?.[brand]) || 0;
+    const has1 = Object.prototype.hasOwnProperty.call(f1.values || {}, brand);
+    const has2 = Object.prototype.hasOwnProperty.call(f2.values || {}, brand);
+    if (!has1 && !(frac > 0 && has2)) return null;
+    const v1 = has1 ? Number(f1.values?.[brand]) || 0 : 0;
+    const v2 = has2 ? Number(f2.values?.[brand]) || 0 : 0;
     return { key: brand, label: brand, value: v1 + (v2 - v1) * frac, colorIndex: idx };
-  });
+  }).filter(Boolean);
   const sorted = items.slice().sort((a, b) => b.value - a.value);
   const topItems = sorted.slice(0, topN).map((item, rank) => ({ ...item, rank }));
   const axisMax = rcNiceMax(Math.max(...topItems.map(item => item.value), 1));
@@ -4120,21 +4124,43 @@ function timeKey(s) {
   return Number(m[1]) * 100 + (m[2] ? Number(m[2]) : 0);
 }
 
+function isDateLikeRacingHeader(h) {
+  const text = String(h ?? '').trim();
+  return isTimeHeader(text) || /^\d{1,2}[.\-\/]\d{1,2}(?:[.\-\/]\d{2,4})?$/.test(text);
+}
+
+function columnHasNumericValue(colIdx) {
+  return genRows.some(row => parseStrictChartNumber(row?.[colIdx]) !== null);
+}
+
+function getSelectedRacingTimeColumns(labelIdx, startIdx) {
+  const cols = [];
+  for (let i = startIdx; i < genHeaders.length; i++) {
+    if (i === labelIdx) break;
+    const header = genHeaders[i];
+    const usable = isDateLikeRacingHeader(header) || columnHasNumericValue(i);
+    if (!usable) break;
+    cols.push(i);
+  }
+  return cols;
+}
+
 // ── Build racing dataset from various sources ────────────────
 function buildFlourishRacingData() {
-  // 1. Custom mode with year-column data
+  // 1. Custom mode with selected label + wide time/value columns
   if (selectedCategory === 'custom' && genHeaders.length > 1 && genRows.length > 0) {
-    const timeCols = genHeaders.reduce((acc,h,i) => { if(isTimeHeader(h)) acc.push(i); return acc; }, [])
-      .sort((a,b)=>{ const ta=genHeaders[a].trim(), tb=genHeaders[b].trim(); return timeKey(ta)-timeKey(tb); });
-
-    const labelIdx = genHeaders.findIndex((h,i)=>!isTimeHeader(h));
+    const { xIdx, yIdx } = getSelectedAxisIndices();
+    const labelIdx = xIdx >= 0 && xIdx < genHeaders.length ? xIdx : genHeaders.findIndex((h,i)=>!isTimeHeader(h));
+    const timeCols = yIdx >= 0 && yIdx < genHeaders.length
+      ? getSelectedRacingTimeColumns(labelIdx, yIdx)
+      : [];
 
     if (timeCols.length >= 2 && labelIdx >= 0) {
-      const brandMap = new Map(); // label → values[]
+      const brandMap = new Map(); // label → (number|null)[]
       genRows.forEach(row => {
         const lbl = String(row[labelIdx]??'').trim(); if(!lbl) return;
-        const vals = timeCols.map(i => { const v=parseFloat(String(row[i]??'').replace(/,/g,'')); return isFinite(v)?Math.max(0,v):0; });
-        if (vals.some(v=>v>0)) {
+        const vals = timeCols.map(i => parseStrictChartNumber(row?.[i]));
+        if (vals.some(v=>v !== null)) {
           if (!brandMap.has(lbl)) brandMap.set(lbl, vals);
         }
       });
@@ -4142,7 +4168,9 @@ function buildFlourishRacingData() {
         const brands = [...brandMap.keys()];
         const frames = timeCols.map((ci,fi) => ({
           year: genHeaders[ci],
-          values: Object.fromEntries(brands.map(b=>[b,brandMap.get(b)[fi]||0]))
+          values: Object.fromEntries(brands
+            .map(b => [b, brandMap.get(b)[fi]])
+            .filter(([, value]) => value !== null))
         }));
         return { brands, frames, timeCols: timeCols.map(i=>genHeaders[i]) };
       }
@@ -4305,9 +4333,13 @@ class FlourishRacingChart {
 
     // Compute values
     const items = this.brands.map(b => {
-      const v1 = Number(f1.values[b])||0, v2 = Number(f2.values[b])||0;
+      const has1 = Object.prototype.hasOwnProperty.call(f1.values, b);
+      const has2 = Object.prototype.hasOwnProperty.call(f2.values, b);
+      if (!has1 && !(frac > 0 && has2)) return null;
+      const v1 = has1 ? Number(f1.values[b]) || 0 : 0;
+      const v2 = has2 ? Number(f2.values[b]) || 0 : 0;
       return { key:b, label:b, value: v1+(v2-v1)*frac };
-    });
+    }).filter(Boolean);
     const sorted = [...items].sort((a,b) => b.value - a.value);
     const top = sorted.slice(0,topN).map((d,idx) => ({...d, rank:idx}));
     const total = items.reduce((s,d)=>s+d.value,0);
@@ -7168,6 +7200,9 @@ function updateGenAxisSelects() {
   const catOpts = `<option value="-1">없음</option>` + opts;
 
   // Normal axes
+  const racingHelp = document.getElementById('gen-racing-axis-help');
+  if (racingHelp) racingHelp.classList.toggle('hide', (studioCurrentType || currentChartType) !== 'racing');
+
   if (xSel) {
     const curX = xSel.value;
     xSel.innerHTML = opts;
